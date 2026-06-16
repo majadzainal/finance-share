@@ -86,7 +86,8 @@ class ClosingPreviewService extends Model
              FROM trx_incomes
              WHERE group_id = :group_id
                AND transaction_date BETWEEN :period_start AND :period_end
-               AND closing_id IS NULL'
+               AND closing_id IS NULL
+               AND deleted_at IS NULL'
         );
         $statement->execute(['group_id' => $groupId, 'period_start' => $periodStart, 'period_end' => $periodEnd]);
 
@@ -100,6 +101,7 @@ class ClosingPreviewService extends Model
              FROM trx_expenses
              WHERE group_id = :group_id
                AND expense_date BETWEEN :period_start AND :period_end
+               AND approval_status = \'approved\'
                AND closing_id IS NULL'
         );
         $statement->execute(['group_id' => $groupId, 'period_start' => $periodStart, 'period_end' => $periodEnd]);
@@ -110,11 +112,31 @@ class ClosingPreviewService extends Model
     private function openingBalance(int $groupId, string $periodStart): float
     {
         $statement = $this->db()->prepare(
-            'SELECT COALESCE(SUM(debit - credit), 0)
-             FROM trx_ledger
-             WHERE group_id = :group_id AND transaction_date < :period_start'
+            "SELECT
+                (SELECT COALESCE(SUM(amount), 0)
+                 FROM trx_incomes
+                 WHERE group_id = :income_group_id
+                   AND transaction_date < :income_period_start
+                   AND deleted_at IS NULL)
+                -
+                (SELECT COALESCE(SUM(amount), 0)
+                 FROM trx_expenses
+                 WHERE group_id = :expense_group_id
+                   AND expense_date < :expense_period_start
+                   AND approval_status = 'approved')
+                -
+                (SELECT COALESCE(SUM(amount), 0)
+                 FROM trx_cash_advances
+                 WHERE group_id = :cash_advance_group_id AND advance_date < :cash_advance_period_start)"
         );
-        $statement->execute(['group_id' => $groupId, 'period_start' => $periodStart]);
+        $statement->execute([
+            'income_group_id' => $groupId,
+            'income_period_start' => $periodStart,
+            'expense_group_id' => $groupId,
+            'expense_period_start' => $periodStart,
+            'cash_advance_group_id' => $groupId,
+            'cash_advance_period_start' => $periodStart,
+        ]);
 
         return (float) $statement->fetchColumn();
     }
@@ -162,6 +184,12 @@ class ClosingPreviewService extends Model
             $warnings[] = "{$lockedExpense} expense pada periode ini sudah locked dan tidak dihitung ulang.";
         }
 
+        $unapprovedExpense = $this->unapprovedExpenseCount($groupId, $periodStart, $periodEnd);
+
+        if ($unapprovedExpense > 0) {
+            $warnings[] = "{$unapprovedExpense} expense belum approved dan tidak akan dihitung closing.";
+        }
+
         if (abs($shareTotal - 100) >= 0.001) {
             $warnings[] = 'Total share_percent member group harus 100% sebelum closing bisa diproses.';
         }
@@ -171,12 +199,29 @@ class ClosingPreviewService extends Model
 
     private function lockedCount(string $table, string $dateColumn, int $groupId, string $periodStart, string $periodEnd): int
     {
+        $deletedWhere = $table === 'trx_incomes' ? 'AND deleted_at IS NULL' : '';
         $statement = $this->db()->prepare(
             "SELECT COUNT(*)
              FROM {$table}
              WHERE group_id = :group_id
                AND {$dateColumn} BETWEEN :period_start AND :period_end
-               AND closing_id IS NOT NULL"
+               AND closing_id IS NOT NULL
+               {$deletedWhere}"
+        );
+        $statement->execute(['group_id' => $groupId, 'period_start' => $periodStart, 'period_end' => $periodEnd]);
+
+        return (int) $statement->fetchColumn();
+    }
+
+    private function unapprovedExpenseCount(int $groupId, string $periodStart, string $periodEnd): int
+    {
+        $statement = $this->db()->prepare(
+            "SELECT COUNT(*)
+             FROM trx_expenses
+             WHERE group_id = :group_id
+               AND expense_date BETWEEN :period_start AND :period_end
+               AND closing_id IS NULL
+               AND approval_status <> 'approved'"
         );
         $statement->execute(['group_id' => $groupId, 'period_start' => $periodStart, 'period_end' => $periodEnd]);
 

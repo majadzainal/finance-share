@@ -1,4 +1,11 @@
 <form method="post" action="<?= e($action) ?>" class="row g-3">
+    <input type="hidden" name="return_url" value="<?= e($returnUrl ?? '/expenses') ?>">
+    <div class="col-12">
+        <div class="alert alert-info mb-0">
+            Expense baru akan masuk status Draft. Approve expense dari halaman list agar ikut dihitung saat closing.
+        </div>
+    </div>
+
     <div class="col-12 col-md-4">
         <label for="group_id" class="form-label">Group / Store</label>
         <select class="form-select <?= isset($errors['group_id']) ? 'is-invalid' : '' ?>" id="group_id" name="group_id" required>
@@ -86,7 +93,7 @@
     </div>
 
     <div class="col-12 d-flex justify-content-end gap-2">
-        <a href="<?= e(url('/expenses')) ?>" class="btn btn-outline-secondary">Cancel</a>
+        <a href="<?= e(url($returnUrl ?? '/expenses')) ?>" class="btn btn-outline-secondary">Cancel</a>
         <button type="submit" class="btn btn-primary"><?= e($submitLabel) ?></button>
     </div>
 </form>

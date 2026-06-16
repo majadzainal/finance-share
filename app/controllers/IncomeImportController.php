@@ -25,10 +25,15 @@ class IncomeImportController extends Controller
     public function store(): string
     {
         $result = null;
+        $preview = null;
         $error = null;
 
         try {
-            $result = $this->service->import((int) ($_POST['group_id'] ?? 0), $_FILES['income_file'] ?? []);
+            if (($_POST['action'] ?? 'preview') === 'confirm') {
+                $result = $this->service->importPreview((string) ($_POST['preview_token'] ?? ''));
+            } else {
+                $preview = $this->service->preview((int) ($_POST['group_id'] ?? 0), $_FILES['income_file'] ?? []);
+            }
         } catch (RuntimeException $exception) {
             $error = $exception->getMessage();
         } catch (Throwable $exception) {
@@ -37,9 +42,20 @@ class IncomeImportController extends Controller
 
         return $this->layout('income_imports.index', $this->viewData([
             'result' => $result,
+            'preview' => $preview,
             'error' => $error,
             'selectedGroupId' => (int) ($_POST['group_id'] ?? 0),
         ]));
+    }
+
+    public function errors(): void
+    {
+        try {
+            $this->service->downloadPreviewErrors((string) ($_GET['token'] ?? ''));
+        } catch (RuntimeException $exception) {
+            http_response_code(404);
+            echo e($exception->getMessage());
+        }
     }
 
     private function viewData(array $overrides = []): array
@@ -50,6 +66,7 @@ class IncomeImportController extends Controller
             'groups' => (new Group())->all(),
             'imports' => $this->service->recentImports(),
             'result' => null,
+            'preview' => null,
             'error' => null,
             'selectedGroupId' => 0,
         ], $overrides);

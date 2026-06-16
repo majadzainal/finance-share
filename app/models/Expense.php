@@ -22,6 +22,7 @@ class Expense extends Model
             "SELECT e.id, e.group_id, e.category_id, e.closing_id, e.expense_date,
                     e.description, e.amount, e.created_by, e.transfer_method_id,
                     e.transfer_fee_amount, e.transfer_fee_expense_id,
+                    e.approval_status,
                     tm.name AS transfer_method_name,
                     g.name AS group_name, c.name AS category_name
              FROM trx_expenses e
@@ -63,6 +64,7 @@ class Expense extends Model
             'SELECT e.id, e.group_id, e.category_id, e.closing_id, e.expense_date,
                     e.description, e.amount, e.created_by, e.transfer_method_id,
                     e.transfer_fee_amount, e.transfer_fee_expense_id,
+                    e.approval_status,
                     tm.name AS transfer_method_name,
                     g.name AS group_name, c.name AS category_name
              FROM trx_expenses e
@@ -84,10 +86,10 @@ class Expense extends Model
         $statement = $this->db()->prepare(
             'INSERT INTO trx_expenses
                 (group_id, category_id, expense_date, amount, description, created_by,
-                 transfer_method_id, transfer_fee_amount)
+                 transfer_method_id, transfer_fee_amount, approval_status)
              VALUES
                 (:group_id, :category_id, :expense_date, :amount, :description, :created_by,
-                 :transfer_method_id, :transfer_fee_amount)'
+                 :transfer_method_id, :transfer_fee_amount, :approval_status)'
         );
         $statement->execute([
             'group_id' => $data['group_id'],
@@ -98,6 +100,7 @@ class Expense extends Model
             'created_by' => $data['created_by'],
             'transfer_method_id' => $data['transfer_method_id'] ?: null,
             'transfer_fee_amount' => $data['transfer_fee_amount'] ?? 0,
+            'approval_status' => $data['approval_status'] ?? 'draft',
         ]);
 
         $id = (int) $this->db()->lastInsertId();
@@ -140,6 +143,40 @@ class Expense extends Model
         return $updated;
     }
 
+    public function updateApprovalStatus(int $id, string $status): bool
+    {
+        if (! in_array($status, ['draft', 'approved', 'rejected'], true)) {
+            return false;
+        }
+
+        $statement = $this->db()->prepare(
+            'UPDATE trx_expenses
+             SET approval_status = :approval_status
+             WHERE id = :id AND closing_id IS NULL'
+        );
+        $updated = $statement->execute([
+            'id' => $id,
+            'approval_status' => $status,
+        ]);
+
+        if ($updated) {
+            $expense = $this->find($id);
+
+            if ($expense && $expense['transfer_fee_expense_id'] !== null) {
+                $this->db()->prepare(
+                    'UPDATE trx_expenses
+                     SET approval_status = :approval_status
+                     WHERE id = :id AND closing_id IS NULL'
+                )->execute([
+                    'id' => (int) $expense['transfer_fee_expense_id'],
+                    'approval_status' => $status,
+                ]);
+            }
+        }
+
+        return $updated;
+    }
+
     public function delete(int $id): bool
     {
         $expense = $this->find($id);
@@ -174,6 +211,11 @@ class Expense extends Model
             $params['date_to'] = $filters['date_to'];
         }
 
+        if (($filters['approval_status'] ?? '') !== '') {
+            $where[] = 'e.approval_status = :approval_status';
+            $params['approval_status'] = $filters['approval_status'];
+        }
+
         return $where === [] ? '' : 'WHERE ' . implode(' AND ', $where);
     }
 
@@ -187,6 +229,7 @@ class Expense extends Model
             'created_by' => 'e.created_by',
             'transfer_method' => 'tm.name',
             'amount' => 'e.amount',
+            'approval_status' => 'e.approval_status',
             'status' => 'e.closing_id',
         ];
         $sortBy = $filters['sort_by'] ?? 'expense_date';
@@ -207,10 +250,10 @@ class Expense extends Model
         $statement = $this->db()->prepare(
             'INSERT INTO trx_expenses
                 (group_id, category_id, expense_date, amount, description, created_by,
-                 transfer_method_id, transfer_fee_amount)
+                 transfer_method_id, transfer_fee_amount, approval_status)
              VALUES
                 (:group_id, :category_id, :expense_date, :amount, :description, :created_by,
-                 :transfer_method_id, 0)'
+                 :transfer_method_id, 0, :approval_status)'
         );
         $statement->execute([
             'group_id' => $data['group_id'],
@@ -220,6 +263,7 @@ class Expense extends Model
             'description' => $data['description'],
             'created_by' => $data['created_by'] ?: 'system',
             'transfer_method_id' => $data['transfer_method_id'] ?: null,
+            'approval_status' => $data['approval_status'] ?? 'draft',
         ]);
 
         return (int) $this->db()->lastInsertId();
@@ -252,6 +296,7 @@ class Expense extends Model
             'description' => 'Biaya transfer untuk expense #' . $expenseId,
             'created_by' => $data['created_by'] ?? 'system',
             'transfer_method_id' => $data['transfer_method_id'] ?? 0,
+            'approval_status' => $expense['approval_status'] ?? 'draft',
         ];
 
         if ($feeExpenseId === null) {
@@ -272,7 +317,8 @@ class Expense extends Model
                  amount = :amount,
                  description = :description,
                  created_by = :created_by,
-                 transfer_method_id = :transfer_method_id
+                 transfer_method_id = :transfer_method_id,
+                 approval_status = :approval_status
              WHERE id = :id AND closing_id IS NULL'
         );
         $statement->execute([
@@ -284,6 +330,7 @@ class Expense extends Model
             'description' => $feeData['description'],
             'created_by' => $feeData['created_by'],
             'transfer_method_id' => $feeData['transfer_method_id'] ?: null,
+            'approval_status' => $feeData['approval_status'],
         ]);
     }
 }

@@ -2,7 +2,7 @@
     <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
         <div>
             <h1 class="h3 mb-1">Saldo Rekening</h1>
-            <p class="text-secondary mb-0">Input manual saldo 3 rekening penampungan dan cek selisih dengan saldo ledger.</p>
+            <p class="text-secondary mb-0">Input manual saldo rekening penampungan sebagai acuan terhadap saldo cash transaksi.</p>
         </div>
     </div>
 
@@ -11,7 +11,7 @@
     <?php endif; ?>
 
     <div class="row g-3">
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <div class="text-secondary small mb-1">Total Saldo Rekening</div>
@@ -19,15 +19,23 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <div class="text-secondary small mb-1">Saldo Seharusnya</div>
+                    <div class="text-secondary small mb-1">Saldo Cash Transaksi</div>
                     <div class="h4 mb-0">Rp <?= e(number_format($expectedBalance, 0, ',', '.')) ?></div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-secondary small mb-1">Kasbon Disalurkan</div>
+                    <div class="h4 mb-0">Rp <?= e(number_format($balanceSummary['total_cash_advance_disbursed'], 0, ',', '.')) ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start gap-3">
@@ -43,9 +51,29 @@
                     </div>
                     <?php if (! $isBalanced): ?>
                         <div class="small text-secondary mt-2">
-                            <?= $difference > 0 ? 'Saldo rekening lebih besar dari ledger.' : 'Saldo rekening lebih kecil dari ledger.' ?>
+                            <?= $difference > 0 ? 'Saldo rekening lebih besar dari perhitungan.' : 'Saldo rekening lebih kecil dari perhitungan.' ?>
                         </div>
                     <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-12 col-md-4">
+                    <div class="text-secondary small mb-1">Total Income</div>
+                    <div class="fw-semibold">Rp <?= e(number_format($balanceSummary['total_income'], 0, ',', '.')) ?></div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="text-secondary small mb-1">Total Expense</div>
+                    <div class="fw-semibold">Rp <?= e(number_format($balanceSummary['total_expense'], 0, ',', '.')) ?></div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="text-secondary small mb-1">Rumus Cek Saldo</div>
+                    <div class="fw-semibold">Income - Expense Approved - Kasbon Disalurkan</div>
+                    <div class="small text-secondary">Outstanding kasbon saat ini: Rp <?= e(number_format($balanceSummary['total_cash_advance'], 0, ',', '.')) ?></div>
                 </div>
             </div>
         </div>

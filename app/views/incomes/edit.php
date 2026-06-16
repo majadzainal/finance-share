@@ -7,6 +7,7 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <form method="post" action="<?= e(url('/income/' . $income['id'])) ?>" class="row g-3">
+                <input type="hidden" name="return_url" value="<?= e($returnUrl ?? '/income') ?>">
                 <div class="col-12 col-md-3">
                     <label class="form-label">Group / Store</label>
                     <input type="text" class="form-control" value="<?= e($income['group_name']) ?>" disabled>
@@ -80,7 +81,7 @@
                 </div>
 
                 <div class="col-12 d-flex justify-content-end gap-2">
-                    <a href="<?= e(url('/income')) ?>" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="<?= e(url($returnUrl ?? '/income')) ?>" class="btn btn-outline-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Update Income</button>
                 </div>
             </form>

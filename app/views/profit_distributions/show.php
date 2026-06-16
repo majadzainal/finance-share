@@ -5,7 +5,7 @@
             <p class="text-secondary mb-0"><?= e($closing['group_name']) ?>, <?= e($closing['period_start']) ?> - <?= e($closing['period_end']) ?></p>
         </div>
         <div>
-            <a href="<?= e(url('/profit-distribution')) ?>" class="btn btn-outline-secondary">Back</a>
+            <a href="<?= e(url($returnUrl ?? '/profit-distribution')) ?>" class="btn btn-outline-secondary">Back</a>
         </div>
     </div>
 
@@ -82,6 +82,7 @@
                             <td class="text-end">
                                 <?php if ($distribution['payment_status'] !== 'paid'): ?>
                                     <form method="post" action="<?= e(url('/profit-distribution/' . $distribution['id'] . '/paid')) ?>">
+                                        <input type="hidden" name="return_url" value="<?= e($_SERVER['REQUEST_URI'] ?? ('/profit-distribution/' . $closing['id'])) ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-success">Mark as Paid</button>
                                     </form>
                                 <?php else: ?>

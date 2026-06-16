@@ -1,5 +1,6 @@
 <?php
 $queryWithoutPage = $filters;
+$currentUrl = $_SERVER['REQUEST_URI'] ?? '/expenses';
 $hasPrevious = $page > 1;
 $hasNext = $page < $totalPages;
 $sortLink = static function (string $column) use ($filters, $sort): string {
@@ -26,7 +27,7 @@ $sortLabel = static function (string $column) use ($sort): string {
             <p class="text-secondary mb-0">Kelola pengeluaran operasional per group/store.</p>
         </div>
         <div>
-            <a href="<?= e(url('/expenses/create')) ?>" class="btn btn-primary">Create Expense</a>
+            <a href="<?= e(url('/expenses/create?return_url=' . urlencode($currentUrl))) ?>" class="btn btn-primary">Create Expense</a>
         </div>
     </div>
 
@@ -73,6 +74,16 @@ $sortLabel = static function (string $column) use ($sort): string {
                     </select>
                 </div>
 
+                <div class="col-12 col-md-2">
+                    <label for="approval_status" class="form-label">Approval</label>
+                    <select class="form-select" id="approval_status" name="approval_status">
+                        <option value="">All Status</option>
+                        <?php foreach (['draft' => 'Draft', 'approved' => 'Approved', 'rejected' => 'Rejected'] as $status => $label): ?>
+                            <option value="<?= e($status) ?>" <?= $filters['approval_status'] === $status ? 'selected' : '' ?>><?= e($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <div class="col-12 col-md-2 d-flex align-items-end gap-2">
                     <button type="submit" class="btn btn-outline-primary flex-fill">Filter</button>
                     <a href="<?= e(url('/expenses')) ?>" class="btn btn-outline-secondary">Reset</a>
@@ -94,6 +105,7 @@ $sortLabel = static function (string $column) use ($sort): string {
                         <th><a class="text-decoration-none text-dark" href="<?= e($sortLink('created_by')) ?>">Created By<?= e($sortLabel('created_by')) ?></a></th>
                         <th><a class="text-decoration-none text-dark" href="<?= e($sortLink('transfer_method')) ?>">Transfer<?= e($sortLabel('transfer_method')) ?></a></th>
                         <th class="text-end"><a class="text-decoration-none text-dark" href="<?= e($sortLink('amount')) ?>">Amount<?= e($sortLabel('amount')) ?></a></th>
+                        <th><a class="text-decoration-none text-dark" href="<?= e($sortLink('approval_status')) ?>">Approval<?= e($sortLabel('approval_status')) ?></a></th>
                         <th><a class="text-decoration-none text-dark" href="<?= e($sortLink('status')) ?>">Status<?= e($sortLabel('status')) ?></a></th>
                         <th class="text-end">Action</th>
                     </tr>
@@ -101,7 +113,7 @@ $sortLabel = static function (string $column) use ($sort): string {
                 <tbody>
                     <?php if ($expenses === []): ?>
                         <tr>
-                            <td colspan="10" class="text-center text-secondary py-4">Data expense tidak ditemukan.</td>
+                            <td colspan="11" class="text-center text-secondary py-4">Data expense tidak ditemukan.</td>
                         </tr>
                     <?php endif; ?>
 
@@ -121,6 +133,16 @@ $sortLabel = static function (string $column) use ($sort): string {
                             </td>
                             <td class="text-end fw-semibold">Rp <?= e(number_format((float) $expense['amount'], 0, ',', '.')) ?></td>
                             <td>
+                                <?php
+                                $approvalTone = match ($expense['approval_status']) {
+                                    'approved' => 'success',
+                                    'rejected' => 'danger',
+                                    default => 'warning',
+                                };
+                                ?>
+                                <span class="badge text-bg-<?= e($approvalTone) ?>"><?= e(ucfirst($expense['approval_status'])) ?></span>
+                            </td>
+                            <td>
                                 <?php if ($expense['closing_id'] !== null): ?>
                                     <span class="badge text-bg-secondary">Locked</span>
                                 <?php else: ?>
@@ -129,9 +151,22 @@ $sortLabel = static function (string $column) use ($sort): string {
                             </td>
                             <td class="text-end">
                                 <?php if ($expense['closing_id'] === null): ?>
-                                    <div class="d-inline-flex gap-2">
-                                        <a href="<?= e(url('/expenses/' . $expense['id'] . '/edit')) ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    <div class="d-inline-flex flex-wrap justify-content-end gap-2">
+                                        <?php if ($expense['approval_status'] !== 'approved'): ?>
+                                            <form method="post" action="<?= e(url('/expenses/' . $expense['id'] . '/approve')) ?>">
+                                                <input type="hidden" name="return_url" value="<?= e($currentUrl) ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline-success">Approve</button>
+                                            </form>
+                                        <?php endif; ?>
+                                        <?php if ($expense['approval_status'] !== 'rejected'): ?>
+                                            <form method="post" action="<?= e(url('/expenses/' . $expense['id'] . '/reject')) ?>">
+                                                <input type="hidden" name="return_url" value="<?= e($currentUrl) ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline-warning">Reject</button>
+                                            </form>
+                                        <?php endif; ?>
+                                        <a href="<?= e(url('/expenses/' . $expense['id'] . '/edit?return_url=' . urlencode($currentUrl))) ?>" class="btn btn-sm btn-outline-primary">Edit</a>
                                         <form method="post" action="<?= e(url('/expenses/' . $expense['id'] . '/delete')) ?>">
+                                            <input type="hidden" name="return_url" value="<?= e($currentUrl) ?>">
                                             <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                         </form>
                                     </div>
@@ -146,7 +181,7 @@ $sortLabel = static function (string $column) use ($sort): string {
                     <tr>
                         <th colspan="7">Total Expense</th>
                         <th class="text-end">Rp <?= e(number_format($totalExpense, 0, ',', '.')) ?></th>
-                        <th colspan="2"></th>
+                        <th colspan="3"></th>
                     </tr>
                 </tfoot>
             </table>

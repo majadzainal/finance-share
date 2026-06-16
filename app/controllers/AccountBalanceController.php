@@ -45,7 +45,8 @@ class AccountBalanceController extends Controller
     {
         $accounts = $data['accounts'] ?? $this->accounts->all();
         $manualTotal = $this->sumAccounts($accounts);
-        $expectedBalance = $this->accounts->expectedBalance();
+        $balanceSummary = $this->accounts->balanceSummary();
+        $expectedBalance = $balanceSummary['expected_balance'];
         $difference = $manualTotal - $expectedBalance;
 
         return array_merge([
@@ -53,6 +54,7 @@ class AccountBalanceController extends Controller
             'activeMenu' => 'account_balances',
             'accounts' => $accounts,
             'manualTotal' => $manualTotal,
+            'balanceSummary' => $balanceSummary,
             'expectedBalance' => $expectedBalance,
             'difference' => $difference,
             'isBalanced' => abs($difference) < 0.01,

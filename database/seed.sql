@@ -22,6 +22,7 @@ VALUES
     ('SALARY', 'Gaji', 'Gaji, honor, atau komisi tim'),
     ('MARKETING', 'Marketing', 'Promosi, iklan, dan biaya pemasaran'),
     ('MAINTENANCE', 'Maintenance', 'Perawatan alat, tempat, atau aset usaha'),
+    ('PROFIT_DISTRIBUTION', 'Profit Distribution', 'Pembayaran profit distribution ke member'),
     ('TRANSFER_FEE', 'Biaya Transfer', 'Biaya admin transfer, BI Fast, RTGS, top up, atau biaya bank lain'),
     ('OTHER', 'Lain-lain', 'Kategori cadangan untuk biaya lain')
 ON DUPLICATE KEY UPDATE

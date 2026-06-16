@@ -50,6 +50,7 @@ class ExpenseController extends Controller
             'title' => 'Create Expense',
             'expense' => $this->emptyExpense(),
             'errors' => [],
+            'returnUrl' => $this->returnUrl('/expenses'),
         ]));
     }
 
@@ -63,12 +64,13 @@ class ExpenseController extends Controller
                 'title' => 'Create Expense',
                 'expense' => $data,
                 'errors' => $errors,
+                'returnUrl' => $this->returnUrl('/expenses'),
             ]));
             return;
         }
 
         $this->expenses->create($data);
-        $this->redirect('/expenses?message=created');
+        $this->redirectBack('message', 'created');
     }
 
     public function edit(string $id): string
@@ -76,13 +78,14 @@ class ExpenseController extends Controller
         $expense = $this->findOrFail((int) $id);
 
         if ($expense['closing_id'] !== null) {
-            $this->redirect('/expenses?error=' . urlencode('Expense locked tidak boleh diedit.'));
+            $this->redirectBack('error', 'Expense locked tidak boleh diedit.');
         }
 
         return $this->layout('expenses.edit', $this->formData([
             'title' => 'Edit Expense',
             'expense' => $expense,
             'errors' => [],
+            'returnUrl' => $this->returnUrl('/expenses'),
         ]));
     }
 
@@ -92,7 +95,7 @@ class ExpenseController extends Controller
         $expense = $this->findOrFail($expenseId);
 
         if ($expense['closing_id'] !== null) {
-            $this->redirect('/expenses?error=' . urlencode('Expense locked tidak boleh diedit.'));
+            $this->redirectBack('error', 'Expense locked tidak boleh diedit.');
         }
 
         $data = $this->validatedData();
@@ -103,12 +106,13 @@ class ExpenseController extends Controller
                 'title' => 'Edit Expense',
                 'expense' => array_merge($expense, $data),
                 'errors' => $errors,
+                'returnUrl' => $this->returnUrl('/expenses'),
             ]));
             return;
         }
 
         $this->expenses->update($expenseId, $data);
-        $this->redirect('/expenses?message=updated');
+        $this->redirectBack('message', 'updated');
     }
 
     public function destroy(string $id): void
@@ -116,11 +120,35 @@ class ExpenseController extends Controller
         $expense = $this->findOrFail((int) $id);
 
         if ($expense['closing_id'] !== null) {
-            $this->redirect('/expenses?error=' . urlencode('Expense locked tidak boleh dihapus.'));
+            $this->redirectBack('error', 'Expense locked tidak boleh dihapus.');
         }
 
         $this->expenses->delete((int) $id);
-        $this->redirect('/expenses?message=deleted');
+        $this->redirectBack('message', 'deleted');
+    }
+
+    public function approve(string $id): void
+    {
+        $expense = $this->findOrFail((int) $id);
+
+        if ($expense['closing_id'] !== null) {
+            $this->redirectBack('error', 'Expense locked tidak boleh diubah approval-nya.');
+        }
+
+        $this->expenses->updateApprovalStatus((int) $id, 'approved');
+        $this->redirectBack('message', 'approved');
+    }
+
+    public function reject(string $id): void
+    {
+        $expense = $this->findOrFail((int) $id);
+
+        if ($expense['closing_id'] !== null) {
+            $this->redirectBack('error', 'Expense locked tidak boleh diubah approval-nya.');
+        }
+
+        $this->expenses->updateApprovalStatus((int) $id, 'rejected');
+        $this->redirectBack('message', 'rejected');
     }
 
     private function filters(): array
@@ -129,10 +157,18 @@ class ExpenseController extends Controller
             'group_id' => (int) ($_GET['group_id'] ?? 0),
             'date_from' => trim($_GET['date_from'] ?? date('Y-m-01')),
             'date_to' => trim($_GET['date_to'] ?? date('Y-m-d')),
+            'approval_status' => $this->approvalStatus(),
             'per_page' => $this->perPage(),
             'sort_by' => $this->sort()['by'],
             'sort_dir' => $this->sort()['dir'],
         ];
+    }
+
+    private function approvalStatus(): string
+    {
+        $status = trim($_GET['approval_status'] ?? '');
+
+        return in_array($status, ['draft', 'approved', 'rejected'], true) ? $status : '';
     }
 
     private function perPage(): int|string
@@ -151,7 +187,7 @@ class ExpenseController extends Controller
 
     private function sort(): array
     {
-        $allowed = ['expense_date', 'group_name', 'category_name', 'description', 'created_by', 'transfer_method', 'amount', 'status'];
+        $allowed = ['expense_date', 'group_name', 'category_name', 'description', 'created_by', 'transfer_method', 'amount', 'approval_status', 'status'];
         $by = trim($_GET['sort_by'] ?? 'expense_date');
         $dir = strtolower(trim($_GET['sort_dir'] ?? 'desc'));
 
@@ -231,6 +267,7 @@ class ExpenseController extends Controller
             'created_by' => '',
             'transfer_method_id' => 0,
             'transfer_fee_amount' => 0,
+            'approval_status' => 'draft',
         ];
     }
 
@@ -250,5 +287,32 @@ class ExpenseController extends Controller
     {
         header('Location: ' . url($path));
         exit;
+    }
+
+    private function redirectBack(string $key, string $value): void
+    {
+        $this->redirect($this->withFlash($this->returnUrl('/expenses'), $key, $value));
+    }
+
+    private function returnUrl(string $fallback): string
+    {
+        $returnUrl = trim((string) ($_POST['return_url'] ?? $_GET['return_url'] ?? ''));
+
+        if ($returnUrl === '' || ! str_starts_with($returnUrl, '/') || str_starts_with($returnUrl, '//')) {
+            return $fallback;
+        }
+
+        return $returnUrl;
+    }
+
+    private function withFlash(string $path, string $key, string $value): string
+    {
+        $parts = parse_url($path);
+        $basePath = $parts['path'] ?? '/expenses';
+        parse_str($parts['query'] ?? '', $query);
+        unset($query['message'], $query['error']);
+        $query[$key] = $value;
+
+        return $basePath . '?' . http_build_query($query);
     }
 }

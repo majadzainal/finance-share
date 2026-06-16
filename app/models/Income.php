@@ -9,6 +9,7 @@ class Income extends Model
     public function paginate(array $filters, int $page, int|string $perPage): array
     {
         $params = [];
+        $amountThreshold = $this->amountReviewThreshold();
         $where = $this->buildWhere($filters, $params);
         $limit = '';
 
@@ -22,6 +23,17 @@ class Income extends Model
             "SELECT i.id, i.group_id, i.closing_id, i.transaction_date, i.reference_no,
                     i.payment_method, i.bank_target, i.income_type, i.client_name,
                     i.address, i.username, i.profile_package, i.amount, i.description,
+                    CASE WHEN i.amount > :amount_threshold THEN 1 ELSE 0 END AS amount_needs_review,
+                    CASE WHEN TRIM(COALESCE(i.username, '')) = '' OR TRIM(COALESCE(i.client_name, '')) = '' THEN 1 ELSE 0 END AS identity_needs_review,
+                    (
+                        SELECT COUNT(*)
+                        FROM trx_incomes d
+                        WHERE d.group_id = i.group_id
+                          AND d.deleted_at IS NULL
+                          AND d.transaction_date = i.transaction_date
+                          AND COALESCE(d.reference_no, '') = COALESCE(i.reference_no, '')
+                          AND COALESCE(d.client_name, '') = COALESCE(i.client_name, '')
+                    ) AS suspicious_duplicate_count,
                     g.name AS group_name
              FROM trx_incomes i
              JOIN mst_groups g ON g.id = i.group_id
@@ -29,9 +41,19 @@ class Income extends Model
              ORDER BY {$orderBy}, i.id DESC
              {$limit}"
         );
-        $statement->execute($params);
+        $statement->bindValue('amount_threshold', $amountThreshold);
 
-        return $statement->fetchAll();
+        foreach ($params as $key => $value) {
+            $statement->bindValue($key, $value);
+        }
+
+        $statement->execute();
+        $rows = $statement->fetchAll();
+
+        return array_map(
+            fn (array $row): array => $this->withReviewFlags($row),
+            $rows
+        );
     }
 
     public function count(array $filters): int
@@ -54,6 +76,19 @@ class Income extends Model
         return (float) $statement->fetchColumn();
     }
 
+    public function reviewSummary(array $filters): array
+    {
+        $params = [];
+        $where = $this->buildWhere($filters, $params);
+        $statement = $this->db()->prepare("SELECT COUNT(*) FROM trx_incomes i {$where}");
+        $statement->execute($params);
+
+        return [
+            'needs_review' => (int) $statement->fetchColumn(),
+            'amount_threshold' => $this->amountReviewThreshold(),
+        ];
+    }
+
     public function find(int $id): ?array
     {
         $statement = $this->db()->prepare(
@@ -64,6 +99,28 @@ class Income extends Model
              FROM trx_incomes i
              JOIN mst_groups g ON g.id = i.group_id
              WHERE i.id = :id
+               AND i.deleted_at IS NULL
+             LIMIT 1'
+        );
+        $statement->execute(['id' => $id]);
+
+        $income = $statement->fetch();
+
+        return $income ?: null;
+    }
+
+    public function findDeleted(int $id): ?array
+    {
+        $statement = $this->db()->prepare(
+            'SELECT i.id, i.group_id, i.closing_id, i.transaction_date, i.reference_no,
+                    i.payment_method, i.bank_target, i.income_type, i.client_name,
+                    i.address, i.username, i.profile_package, i.amount, i.description,
+                    i.deleted_at, i.deleted_by,
+                    g.name AS group_name
+             FROM trx_incomes i
+             JOIN mst_groups g ON g.id = i.group_id
+             WHERE i.id = :id
+               AND i.deleted_at IS NOT NULL
              LIMIT 1'
         );
         $statement->execute(['id' => $id]);
@@ -88,7 +145,7 @@ class Income extends Model
                  profile_package = :profile_package,
                  amount = :amount,
                  description = :description
-             WHERE id = :id AND closing_id IS NULL'
+             WHERE id = :id AND closing_id IS NULL AND deleted_at IS NULL'
         );
 
         return $statement->execute([
@@ -109,14 +166,47 @@ class Income extends Model
 
     public function delete(int $id): bool
     {
-        $statement = $this->db()->prepare('DELETE FROM trx_incomes WHERE id = :id AND closing_id IS NULL');
+        $statement = $this->db()->prepare(
+            'UPDATE trx_incomes
+             SET deleted_at = NOW(),
+                 deleted_by = :deleted_by
+             WHERE id = :id
+               AND closing_id IS NULL
+               AND deleted_at IS NULL'
+        );
 
-        return $statement->execute(['id' => $id]);
+        $statement->execute([
+            'id' => $id,
+            'deleted_by' => $_SESSION['user']['username'] ?? $_SESSION['user']['name'] ?? 'system',
+        ]);
+
+        return $statement->rowCount() > 0;
+    }
+
+    public function restore(int $id): bool
+    {
+        $statement = $this->db()->prepare(
+            'UPDATE trx_incomes
+             SET deleted_at = NULL,
+                 deleted_by = NULL
+             WHERE id = :id
+               AND closing_id IS NULL
+               AND deleted_at IS NOT NULL'
+        );
+        $statement->execute(['id' => $id]);
+
+        return $statement->rowCount() > 0;
     }
 
     private function buildWhere(array $filters, array &$params): string
     {
         $where = [];
+
+        if (($filters['deleted'] ?? '') === '1') {
+            $where[] = 'i.deleted_at IS NOT NULL';
+        } else {
+            $where[] = 'i.deleted_at IS NULL';
+        }
 
         if (($filters['group_id'] ?? 0) > 0) {
             $where[] = 'i.group_id = :group_id';
@@ -139,6 +229,26 @@ class Income extends Model
             $params['search_client'] = '%' . $filters['search'] . '%';
         }
 
+        if (($filters['needs_review'] ?? '') === '1') {
+            $amountThreshold = $this->amountReviewThreshold();
+            $where[] = "(
+                i.amount > :review_amount_threshold
+                OR TRIM(COALESCE(i.username, '')) = ''
+                OR TRIM(COALESCE(i.client_name, '')) = ''
+                OR EXISTS (
+                    SELECT 1
+                    FROM trx_incomes d
+                    WHERE d.id <> i.id
+                      AND d.group_id = i.group_id
+                      AND d.deleted_at IS NULL
+                      AND d.transaction_date = i.transaction_date
+                      AND COALESCE(d.reference_no, '') = COALESCE(i.reference_no, '')
+                      AND COALESCE(d.client_name, '') = COALESCE(i.client_name, '')
+                )
+            )";
+            $params['review_amount_threshold'] = $amountThreshold;
+        }
+
         return $where === [] ? '' : 'WHERE ' . implode(' AND ', $where);
     }
 
@@ -159,5 +269,35 @@ class Income extends Model
         $column = $columns[$sortBy] ?? $columns['transaction_date'];
 
         return $column . ' ' . $sortDir;
+    }
+
+    private function amountReviewThreshold(): float
+    {
+        $statement = $this->db()->query('SELECT COALESCE(AVG(amount), 0) FROM trx_incomes WHERE deleted_at IS NULL');
+        $average = (float) $statement->fetchColumn();
+
+        return max(250000.0, $average * 2.5);
+    }
+
+    private function withReviewFlags(array $row): array
+    {
+        $reasons = [];
+
+        if ((int) $row['amount_needs_review'] === 1) {
+            $reasons[] = 'Amount tidak wajar';
+        }
+
+        if ((int) $row['identity_needs_review'] === 1) {
+            $reasons[] = 'Username/client kosong';
+        }
+
+        if ((int) $row['suspicious_duplicate_count'] > 1) {
+            $reasons[] = 'Duplicate mencurigakan';
+        }
+
+        $row['review_reasons'] = $reasons;
+        $row['needs_review'] = $reasons !== [];
+
+        return $row;
     }
 }

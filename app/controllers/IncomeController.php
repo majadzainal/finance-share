@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Models\Group;
 use App\Models\Income;
+use App\Services\AuditTrail;
 
 class IncomeController extends Controller
 {
@@ -37,8 +38,10 @@ class IncomeController extends Controller
             'sort' => $this->sort(),
             'rowStart' => $perPage === 'all' ? 1 : (($page - 1) * $perPage) + 1,
             'totalAmount' => $this->incomes->totalAmount($filters),
+            'reviewSummary' => $this->incomes->reviewSummary(array_merge($filters, ['needs_review' => '1'])),
             'flash' => $_GET['message'] ?? null,
             'error' => $_GET['error'] ?? null,
+            'canDeleteIncome' => $this->canDeleteIncome(),
         ]);
     }
 
@@ -47,7 +50,7 @@ class IncomeController extends Controller
         $income = $this->findOrFail((int) $id);
 
         if ($income['closing_id'] !== null) {
-            $this->redirect('/income?error=' . urlencode('Income locked tidak boleh diedit.'));
+            $this->redirectBack('error', 'Income locked tidak boleh diedit.');
         }
 
         return $this->layout('incomes.edit', [
@@ -55,6 +58,7 @@ class IncomeController extends Controller
             'activeMenu' => 'income',
             'income' => $income,
             'errors' => [],
+            'returnUrl' => $this->returnUrl('/income'),
         ]);
     }
 
@@ -64,7 +68,7 @@ class IncomeController extends Controller
         $income = $this->findOrFail($incomeId);
 
         if ($income['closing_id'] !== null) {
-            $this->redirect('/income?error=' . urlencode('Income locked tidak boleh diedit.'));
+            $this->redirectBack('error', 'Income locked tidak boleh diedit.');
         }
 
         $data = $this->validatedData();
@@ -76,12 +80,13 @@ class IncomeController extends Controller
                 'activeMenu' => 'income',
                 'income' => array_merge($income, $data),
                 'errors' => $errors,
+                'returnUrl' => $this->returnUrl('/income'),
             ]);
             return;
         }
 
         $this->incomes->update($incomeId, $data);
-        $this->redirect('/income?message=updated');
+        $this->redirectBack('message', 'updated');
     }
 
     public function destroy(string $id): void
@@ -89,11 +94,52 @@ class IncomeController extends Controller
         $income = $this->findOrFail((int) $id);
 
         if ($income['closing_id'] !== null) {
-            $this->redirect('/income?error=' . urlencode('Income locked tidak boleh dihapus.'));
+            $this->redirectBack('error', 'Income locked tidak boleh dihapus.');
         }
 
-        $this->incomes->delete((int) $id);
-        $this->redirect('/income?message=deleted');
+        if (! $this->canDeleteIncome()) {
+            http_response_code(403);
+            exit('403 - Access denied');
+        }
+
+        if ($this->incomes->delete((int) $id)) {
+            AuditTrail::record('delete', [
+                'action' => 'soft_delete',
+                'income_id' => (int) $id,
+                'income_before' => $income,
+            ]);
+        }
+
+        $this->redirectBack('message', 'deleted');
+    }
+
+    public function restore(string $id): void
+    {
+        if (! $this->canDeleteIncome()) {
+            http_response_code(403);
+            exit('403 - Access denied');
+        }
+
+        $income = $this->incomes->findDeleted((int) $id);
+
+        if (! $income) {
+            http_response_code(404);
+            exit('404 - Deleted income not found');
+        }
+
+        if ($income['closing_id'] !== null) {
+            $this->redirectBack('error', 'Income locked tidak boleh dikembalikan.');
+        }
+
+        if ($this->incomes->restore((int) $id)) {
+            AuditTrail::record('restore', [
+                'action' => 'restore_soft_deleted',
+                'income_id' => (int) $id,
+                'income_restored' => $income,
+            ]);
+        }
+
+        $this->redirectBack('message', 'restored');
     }
 
     private function filters(): array
@@ -103,6 +149,8 @@ class IncomeController extends Controller
             'date_from' => trim($_GET['date_from'] ?? date('Y-m-01')),
             'date_to' => trim($_GET['date_to'] ?? date('Y-m-d')),
             'search' => trim($_GET['search'] ?? ''),
+            'needs_review' => ($_GET['needs_review'] ?? '') === '1' ? '1' : '',
+            'deleted' => ($_GET['deleted'] ?? '') === '1' ? '1' : '',
             'per_page' => $this->perPage(),
             'sort_by' => $this->sort()['by'],
             'sort_dir' => $this->sort()['dir'],
@@ -191,5 +239,37 @@ class IncomeController extends Controller
     {
         header('Location: ' . url($path));
         exit;
+    }
+
+    private function redirectBack(string $key, string $value): void
+    {
+        $this->redirect($this->withFlash($this->returnUrl('/income'), $key, $value));
+    }
+
+    private function returnUrl(string $fallback): string
+    {
+        $returnUrl = trim((string) ($_POST['return_url'] ?? $_GET['return_url'] ?? ''));
+
+        if ($returnUrl === '' || ! str_starts_with($returnUrl, '/') || str_starts_with($returnUrl, '//')) {
+            return $fallback;
+        }
+
+        return $returnUrl;
+    }
+
+    private function withFlash(string $path, string $key, string $value): string
+    {
+        $parts = parse_url($path);
+        $basePath = $parts['path'] ?? '/income';
+        parse_str($parts['query'] ?? '', $query);
+        unset($query['message'], $query['error']);
+        $query[$key] = $value;
+
+        return $basePath . '?' . http_build_query($query);
+    }
+
+    private function canDeleteIncome(): bool
+    {
+        return in_array($_SESSION['user']['role'] ?? '', ['admin', 'finance'], true);
     }
 }

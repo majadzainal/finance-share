@@ -1,5 +1,6 @@
 <?php
 $queryWithoutPage = $filters;
+$currentUrl = $_SERVER['REQUEST_URI'] ?? '/income';
 $hasPrevious = $page > 1;
 $hasNext = $page < $totalPages;
 $sortLink = static function (string $column) use ($filters, $sort): string {
@@ -29,6 +30,7 @@ $sortLabel = static function (string $column) use ($sort): string {
             <div class="card-body py-2">
                 <div class="small text-secondary">Total Amount</div>
                 <div class="fs-5 fw-bold">Rp <?= e(number_format($totalAmount, 0, ',', '.')) ?></div>
+                <div class="small text-secondary">Needs Review: <?= e($reviewSummary['needs_review']) ?></div>
             </div>
         </div>
     </div>
@@ -81,6 +83,23 @@ $sortLabel = static function (string $column) use ($sort): string {
                     </select>
                 </div>
 
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Review</label>
+                    <div class="form-check border rounded-2 px-3 py-2">
+                        <input type="checkbox" class="form-check-input ms-0 me-2" id="needs_review" name="needs_review" value="1" <?= $filters['needs_review'] === '1' ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="needs_review">Needs Review only</label>
+                    </div>
+                    <div class="form-text">Amount &gt; Rp <?= e(number_format($reviewSummary['amount_threshold'], 0, ',', '.')) ?>, identity kosong, atau duplicate mencurigakan.</div>
+                </div>
+
+                <div class="col-12 col-md-2">
+                    <label class="form-label">Status Data</label>
+                    <div class="form-check border rounded-2 px-3 py-2">
+                        <input type="checkbox" class="form-check-input ms-0 me-2" id="deleted" name="deleted" value="1" <?= $filters['deleted'] === '1' ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="deleted">Deleted only</label>
+                    </div>
+                </div>
+
                 <div class="col-12 col-md-2 d-flex align-items-end gap-2">
                     <button type="submit" class="btn btn-outline-primary flex-fill">Filter</button>
                     <a href="<?= e(url('/income')) ?>" class="btn btn-outline-secondary">Reset</a>
@@ -102,6 +121,7 @@ $sortLabel = static function (string $column) use ($sort): string {
                         <th><a class="text-decoration-none text-dark" href="<?= e($sortLink('username')) ?>">Username<?= e($sortLabel('username')) ?></a></th>
                         <th><a class="text-decoration-none text-dark" href="<?= e($sortLink('payment_method')) ?>">Payment<?= e($sortLabel('payment_method')) ?></a></th>
                         <th class="text-end"><a class="text-decoration-none text-dark" href="<?= e($sortLink('amount')) ?>">Amount<?= e($sortLabel('amount')) ?></a></th>
+                        <th>Review</th>
                         <th><a class="text-decoration-none text-dark" href="<?= e($sortLink('status')) ?>">Status<?= e($sortLabel('status')) ?></a></th>
                         <th class="text-end">Action</th>
                     </tr>
@@ -109,7 +129,7 @@ $sortLabel = static function (string $column) use ($sort): string {
                 <tbody>
                     <?php if ($incomes === []): ?>
                         <tr>
-                            <td colspan="10" class="text-center text-secondary py-4">Data income tidak ditemukan.</td>
+                            <td colspan="11" class="text-center text-secondary py-4">Data income tidak ditemukan.</td>
                         </tr>
                     <?php endif; ?>
 
@@ -127,19 +147,51 @@ $sortLabel = static function (string $column) use ($sort): string {
                             </td>
                             <td class="text-end fw-semibold">Rp <?= e(number_format((float) $income['amount'], 0, ',', '.')) ?></td>
                             <td>
-                                <?php if ($income['closing_id'] !== null): ?>
+                                <?php if ($income['needs_review']): ?>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <?php foreach ($income['review_reasons'] as $reason): ?>
+                                            <?php
+                                            $tone = match ($reason) {
+                                                'Amount tidak wajar' => 'danger',
+                                                'Username/client kosong' => 'warning',
+                                                default => 'primary',
+                                            };
+                                            ?>
+                                            <span class="badge text-bg-<?= e($tone) ?>"><?= e($reason) ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else: ?>
+                                    <span class="badge text-bg-light text-secondary border">OK</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if (($filters['deleted'] ?? '') === '1'): ?>
+                                    <span class="badge text-bg-danger">Deleted</span>
+                                <?php elseif ($income['closing_id'] !== null): ?>
                                     <span class="badge text-bg-secondary">Locked</span>
                                 <?php else: ?>
                                     <span class="badge text-bg-success">Open</span>
                                 <?php endif; ?>
                             </td>
                             <td class="text-end">
-                                <?php if ($income['closing_id'] === null): ?>
-                                    <div class="d-inline-flex gap-2">
-                                        <a href="<?= e(url('/income/' . $income['id'] . '/edit')) ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                        <form method="post" action="<?= e(url('/income/' . $income['id'] . '/delete')) ?>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                <?php if (($filters['deleted'] ?? '') === '1'): ?>
+                                    <?php if ($income['closing_id'] === null && $canDeleteIncome): ?>
+                                        <form method="post" action="<?= e(url('/income/' . $income['id'] . '/restore')) ?>">
+                                            <input type="hidden" name="return_url" value="<?= e($currentUrl) ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-success">Restore</button>
                                         </form>
+                                    <?php else: ?>
+                                        <span class="text-secondary small">No action</span>
+                                    <?php endif; ?>
+                                <?php elseif ($income['closing_id'] === null): ?>
+                                    <div class="d-inline-flex gap-2">
+                                        <a href="<?= e(url('/income/' . $income['id'] . '/edit?return_url=' . urlencode($currentUrl))) ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <?php if ($canDeleteIncome): ?>
+                                            <form method="post" action="<?= e(url('/income/' . $income['id'] . '/delete')) ?>">
+                                                <input type="hidden" name="return_url" value="<?= e($currentUrl) ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 <?php else: ?>
                                     <span class="text-secondary small">No action</span>

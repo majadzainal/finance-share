@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\Model;
+use RuntimeException;
 
 class ProfitDistribution extends Model
 {
@@ -90,27 +91,106 @@ class ProfitDistribution extends Model
             return null;
         }
 
-        $statement = $this->db()->prepare(
-            "UPDATE trx_profit_distributions
-             SET status = 'paid',
-                 paid_at = NOW()
-             WHERE id = :id
-               AND status <> 'paid'"
-        );
-        $statement->execute(['id' => $distributionId]);
+        $db = $this->db();
+        $db->beginTransaction();
 
-        $this->markClosingPaidIfComplete((int) $distribution['closing_id']);
+        try {
+            $statement = $db->prepare(
+                "UPDATE trx_profit_distributions
+                 SET status = 'paid',
+                     paid_at = NOW()
+                 WHERE id = :id
+                   AND status <> 'paid'"
+            );
+            $statement->execute(['id' => $distributionId]);
+
+            if ($statement->rowCount() > 0) {
+                $this->createPaidExpense($distribution);
+            }
+
+            $this->markClosingPaidIfComplete((int) $distribution['closing_id']);
+            $db->commit();
+        } catch (\Throwable $exception) {
+            $db->rollBack();
+            throw $exception;
+        }
+
 
         return (int) $distribution['closing_id'];
     }
 
     private function findDistribution(int $id): ?array
     {
-        $statement = $this->db()->prepare('SELECT id, closing_id, status FROM trx_profit_distributions WHERE id = :id LIMIT 1');
+        $statement = $this->db()->prepare(
+            'SELECT d.id, d.closing_id, d.group_id, d.member_id, d.paid_amount, d.status,
+                    c.period_start, c.period_end,
+                    m.name AS member_name
+             FROM trx_profit_distributions d
+             JOIN trx_closings c ON c.id = d.closing_id
+             JOIN mst_members m ON m.id = d.member_id
+             WHERE d.id = :id
+             LIMIT 1'
+        );
         $statement->execute(['id' => $id]);
         $distribution = $statement->fetch();
 
         return $distribution ?: null;
+    }
+
+    private function createPaidExpense(array $distribution): void
+    {
+        $amount = (float) $distribution['paid_amount'];
+
+        if ($amount <= 0 || $this->paidExpenseExists((int) $distribution['id'])) {
+            return;
+        }
+
+        $categoryId = $this->profitDistributionCategoryId();
+        $statement = $this->db()->prepare(
+            'INSERT INTO trx_expenses
+                (group_id, category_id, closing_id, expense_date, amount, description,
+                 created_by, approval_status, notes)
+             VALUES
+                (:group_id, :category_id, :closing_id, CURDATE(), :amount, :description,
+                 :created_by, :approval_status, :notes)'
+        );
+        $statement->execute([
+            'group_id' => (int) $distribution['group_id'],
+            'category_id' => $categoryId,
+            'closing_id' => (int) $distribution['closing_id'],
+            'amount' => $amount,
+            'description' => 'Profit distribution paid - ' . $distribution['member_name']
+                . ' periode ' . $distribution['period_start'] . ' s/d ' . $distribution['period_end'],
+            'created_by' => 'profit_distribution',
+            'approval_status' => 'approved',
+            'notes' => 'profit_distribution_id:' . (int) $distribution['id'],
+        ]);
+    }
+
+    private function paidExpenseExists(int $distributionId): bool
+    {
+        $statement = $this->db()->prepare(
+            "SELECT COUNT(*)
+             FROM trx_expenses
+             WHERE created_by = 'profit_distribution'
+               AND notes = :notes"
+        );
+        $statement->execute(['notes' => 'profit_distribution_id:' . $distributionId]);
+
+        return (int) $statement->fetchColumn() > 0;
+    }
+
+    private function profitDistributionCategoryId(): int
+    {
+        $category = new ExpenseCategory();
+        $categoryId = $category->findIdByCode('PROFIT_DISTRIBUTION')
+            ?? $category->findIdByCode('OTHER');
+
+        if ($categoryId === null) {
+            throw new RuntimeException('Kategori expense untuk profit distribution belum tersedia.');
+        }
+
+        return $categoryId;
     }
 
     private function markClosingPaidIfComplete(int $closingId): void

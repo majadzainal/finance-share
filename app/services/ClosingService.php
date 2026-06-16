@@ -124,6 +124,7 @@ class ClosingService extends Model
             'description' => 'Biaya transfer closing periode ' . $expenseDate,
             'created_by' => $createdBy,
             'transfer_method_id' => $transferMethodId,
+            'approval_status' => 'approved',
         ]);
     }
 
@@ -134,7 +135,8 @@ class ClosingService extends Model
              SET closing_id = :closing_id
              WHERE group_id = :group_id
                AND transaction_date BETWEEN :period_start AND :period_end
-               AND closing_id IS NULL'
+               AND closing_id IS NULL
+               AND deleted_at IS NULL'
         );
         $statement->execute([
             'closing_id' => $closingId,
@@ -151,6 +153,7 @@ class ClosingService extends Model
              SET closing_id = :closing_id
              WHERE group_id = :group_id
                AND expense_date BETWEEN :period_start AND :period_end
+               AND approval_status = \'approved\'
                AND closing_id IS NULL'
         );
         $statement->execute([

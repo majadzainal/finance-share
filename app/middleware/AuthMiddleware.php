@@ -25,8 +25,15 @@ class AuthMiddleware
             exit('403 - Access denied');
         }
 
+        if (! $this->canAccessPath($path, $_SERVER['REQUEST_METHOD'] ?? 'GET')) {
+            http_response_code(403);
+            exit('403 - Access denied');
+        }
+
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-            AuditTrail::record($this->eventFromPath($path));
+            if (! $this->isControllerAuditedPath($path)) {
+                AuditTrail::record($this->eventFromPath($path));
+            }
         }
     }
 
@@ -46,7 +53,7 @@ class AuthMiddleware
         $segments = array_values(array_filter(explode('/', trim($path, '/'))));
         $last = end($segments) ?: '';
 
-        if (in_array($last, ['activate', 'deactivate', 'delete', 'paid'], true)) {
+        if (in_array($last, ['activate', 'deactivate', 'delete', 'restore', 'paid'], true)) {
             return $last;
         }
 
@@ -59,5 +66,25 @@ class AuthMiddleware
         }
 
         return 'store';
+    }
+
+    private function canAccessPath(string $path, string $method): bool
+    {
+        if ($method !== 'POST') {
+            return true;
+        }
+
+        $role = $_SESSION['user']['role'] ?? '';
+
+        if (preg_match('#^/.+/\d+/delete$#', $path) === 1 || preg_match('#^/income/\d+/restore$#', $path) === 1) {
+            return in_array($role, ['admin', 'finance'], true);
+        }
+
+        return true;
+    }
+
+    private function isControllerAuditedPath(string $path): bool
+    {
+        return preg_match('#^/income/\d+/(delete|restore)$#', $path) === 1;
     }
 }

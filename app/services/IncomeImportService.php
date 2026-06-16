@@ -53,7 +53,7 @@ class IncomeImportService extends Model
         'description' => 'description',
     ];
 
-    public function import(int $groupId, array $file): array
+    public function preview(int $groupId, array $file): array
     {
         $this->validateUpload($groupId, $file);
 
@@ -64,37 +64,89 @@ class IncomeImportService extends Model
             throw new RuntimeException('File CSV ini sudah pernah di-import.');
         }
 
-        $rows = $this->readCsvRows($tmpPath);
-        $storedFileName = $this->storeUploadedFile($file, $fileHash);
+        $analysis = $this->analyzeCsvRows($tmpPath, $groupId);
+        $token = bin2hex(random_bytes(16));
+        $previewFile = $this->storePreviewFile($file, $token);
+
+        $_SESSION['income_import_preview'][$token] = [
+            'group_id' => $groupId,
+            'preview_file' => $previewFile,
+            'original_name' => basename($file['name'] ?? 'income-import.csv'),
+            'file_hash' => $fileHash,
+            'created_at' => time(),
+        ];
+
+        return array_merge($analysis, [
+            'token' => $token,
+            'file_hash' => $fileHash,
+            'original_name' => basename($file['name'] ?? 'income-import.csv'),
+            'can_import' => $analysis['valid_rows'] > 0,
+        ]);
+    }
+
+    public function importPreview(string $token): array
+    {
+        $preview = $_SESSION['income_import_preview'][$token] ?? null;
+
+        if (! is_array($preview)) {
+            throw new RuntimeException('Preview import sudah tidak tersedia. Upload ulang file CSV.');
+        }
+
+        if (($preview['created_at'] ?? 0) < time() - 3600) {
+            unset($_SESSION['income_import_preview'][$token]);
+            throw new RuntimeException('Preview import sudah kedaluwarsa. Upload ulang file CSV.');
+        }
+
+        $path = base_path('storage/tmp/income_import_previews/' . $preview['preview_file']);
+
+        if (! is_file($path)) {
+            unset($_SESSION['income_import_preview'][$token]);
+            throw new RuntimeException('File preview tidak ditemukan. Upload ulang file CSV.');
+        }
+
+        $groupId = (int) $preview['group_id'];
+        $fileHash = (string) $preview['file_hash'];
+
+        if ($this->fileHashExists($fileHash)) {
+            throw new RuntimeException('File CSV ini sudah pernah di-import.');
+        }
+
+        $analysis = $this->analyzeCsvRows($path, $groupId);
+        $storedFileName = $this->storePreviewAsImportFile($path, (string) $preview['original_name'], $fileHash);
         $db = $this->db();
 
         $db->beginTransaction();
 
         try {
-            $importId = $this->createImportRecord($groupId, $file, $storedFileName, $fileHash, count($rows));
+            $importId = $this->createImportRecord(
+                $groupId,
+                (string) $preview['original_name'],
+                $storedFileName,
+                $fileHash,
+                $analysis['total_rows']
+            );
             $successRows = 0;
-            $duplicateRows = 0;
 
-            foreach ($rows as $row) {
-                $inserted = $this->insertIncomeRow($groupId, $importId, $row);
-
-                if ($inserted) {
+            foreach ($analysis['valid_data'] as $row) {
+                if ($this->insertIncomeRow($groupId, $importId, $row)) {
                     $successRows++;
-                } else {
-                    $duplicateRows++;
                 }
             }
 
-            $this->updateImportRecord($importId, $successRows, $duplicateRows, 'completed');
+            $duplicateRows = $analysis['duplicate_rows'] + (count($analysis['valid_data']) - $successRows);
+            $this->updateImportRecord($importId, $successRows, $duplicateRows, $analysis['error_rows'], 'completed');
             $db->commit();
+            unset($_SESSION['income_import_preview'][$token]);
+            @unlink($path);
 
             return [
                 'import_id' => $importId,
                 'filename' => $storedFileName,
                 'file_hash' => $fileHash,
-                'total_rows' => count($rows),
+                'total_rows' => $analysis['total_rows'],
                 'success_rows' => $successRows,
                 'duplicate_rows' => $duplicateRows,
+                'error_rows' => $analysis['error_rows'],
             ];
         } catch (Throwable $exception) {
             $db->rollBack();
@@ -102,11 +154,48 @@ class IncomeImportService extends Model
         }
     }
 
+    public function downloadPreviewErrors(string $token): void
+    {
+        $preview = $_SESSION['income_import_preview'][$token] ?? null;
+
+        if (! is_array($preview)) {
+            throw new RuntimeException('Preview import sudah tidak tersedia. Upload ulang file CSV.');
+        }
+
+        $path = base_path('storage/tmp/income_import_previews/' . $preview['preview_file']);
+
+        if (! is_file($path)) {
+            throw new RuntimeException('File preview tidak ditemukan. Upload ulang file CSV.');
+        }
+
+        $analysis = $this->analyzeCsvRows($path, (int) $preview['group_id']);
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="income-import-errors.csv"');
+
+        $output = fopen('php://output', 'wb');
+        fputcsv($output, ['row_number', 'error', 'reference_id', 'payment_date', 'username', 'amount', 'description']);
+
+        foreach ($analysis['error_data'] as $error) {
+            fputcsv($output, [
+                $error['row_number'],
+                $error['error'],
+                $error['row']['reference_id'] ?? '',
+                $error['row']['payment_date'] ?? '',
+                $error['row']['username'] ?? '',
+                $error['row']['amount'] ?? '',
+                $error['row']['description'] ?? '',
+            ]);
+        }
+
+        fclose($output);
+    }
+
     public function recentImports(): array
     {
         $statement = $this->db()->query(
             'SELECT i.id, i.file_name, i.file_hash, i.total_rows, i.success_rows,
-                    i.duplicate_rows, i.import_date, i.status, g.name AS group_name
+                    i.duplicate_rows, i.failed_rows, i.import_date, i.status, g.name AS group_name
              FROM trx_imports i
              LEFT JOIN mst_groups g ON g.id = i.group_id
              ORDER BY i.import_date DESC, i.id DESC
@@ -153,7 +242,25 @@ class IncomeImportService extends Model
         return (int) $statement->fetchColumn() > 0;
     }
 
-    private function storeUploadedFile(array $file, string $fileHash): string
+    private function storePreviewFile(array $file, string $token): string
+    {
+        $directory = base_path('storage/tmp/income_import_previews');
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0775, true);
+        }
+
+        $previewFile = $token . '.csv';
+        $targetPath = $directory . DIRECTORY_SEPARATOR . $previewFile;
+
+        if (! move_uploaded_file($file['tmp_name'], $targetPath)) {
+            throw new RuntimeException('Gagal menyimpan file preview.');
+        }
+
+        return $previewFile;
+    }
+
+    private function storePreviewAsImportFile(string $path, string $originalName, string $fileHash): string
     {
         $directory = base_path('storage/uploads/income_imports');
 
@@ -161,16 +268,88 @@ class IncomeImportService extends Model
             mkdir($directory, 0775, true);
         }
 
-        $originalName = basename($file['name']);
         $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName) ?: 'income-import.csv';
         $storedFileName = date('YmdHis') . '_' . substr($fileHash, 0, 12) . '_' . $safeName;
         $targetPath = $directory . DIRECTORY_SEPARATOR . $storedFileName;
 
-        if (! move_uploaded_file($file['tmp_name'], $targetPath)) {
-            throw new RuntimeException('Gagal menyimpan file upload.');
+        if (! copy($path, $targetPath)) {
+            throw new RuntimeException('Gagal menyimpan file import.');
         }
 
         return $storedFileName;
+    }
+
+    private function analyzeCsvRows(string $path, int $groupId): array
+    {
+        $handle = fopen($path, 'rb');
+
+        if ($handle === false) {
+            throw new RuntimeException('File CSV tidak bisa dibaca.');
+        }
+
+        $header = fgetcsv($handle, 0, ';');
+
+        if ($header === false) {
+            fclose($handle);
+            throw new RuntimeException('File CSV kosong.');
+        }
+
+        $columnMap = $this->buildColumnMap($header);
+        $validRows = [];
+        $sampleRows = [];
+        $errorRows = [];
+        $duplicateRows = 0;
+        $seenKeys = [];
+        $rowNumber = 1;
+
+        while (($line = fgetcsv($handle, 0, ';')) !== false) {
+            $rowNumber++;
+
+            if ($this->isBlankRow($line)) {
+                continue;
+            }
+
+            $rawRow = $this->mapCsvLine($line, $columnMap);
+
+            if ($this->isSummaryRow($rawRow)) {
+                continue;
+            }
+
+            try {
+                $row = $this->normalizeRow($rawRow);
+                $duplicateKey = $this->duplicateKey($groupId, $row);
+
+                if (isset($seenKeys[$duplicateKey]) || $this->incomeRowExists($groupId, $row)) {
+                    $duplicateRows++;
+                    continue;
+                }
+
+                $seenKeys[$duplicateKey] = true;
+                $validRows[] = $row;
+
+                if (count($sampleRows) < 20) {
+                    $sampleRows[] = $row;
+                }
+            } catch (RuntimeException $exception) {
+                $errorRows[] = [
+                    'row_number' => $rowNumber,
+                    'error' => $exception->getMessage(),
+                    'row' => $rawRow,
+                ];
+            }
+        }
+
+        fclose($handle);
+
+        return [
+            'total_rows' => count($validRows) + $duplicateRows + count($errorRows),
+            'valid_rows' => count($validRows),
+            'duplicate_rows' => $duplicateRows,
+            'error_rows' => count($errorRows),
+            'sample_rows' => $sampleRows,
+            'error_data' => $errorRows,
+            'valid_data' => $validRows,
+        ];
     }
 
     private function readCsvRows(string $path): array
@@ -196,25 +375,38 @@ class IncomeImportService extends Model
                 continue;
             }
 
-            $row = [];
-
-            foreach ($columnMap as $index => $field) {
-                $row[$field] = trim((string) ($line[$index] ?? ''));
-            }
+            $row = $this->mapCsvLine($line, $columnMap);
 
             if ($this->isSummaryRow($row)) {
                 continue;
             }
 
-            $row['payment_date'] = $this->parseDate($row['payment_date'] ?? '');
-            $row['amount'] = $this->parseAmount($row['amount'] ?? '');
-            $row['raw_payload'] = $this->encodeRawPayload($row);
-            $rows[] = $row;
+            $rows[] = $this->normalizeRow($row);
         }
 
         fclose($handle);
 
         return $rows;
+    }
+
+    private function mapCsvLine(array $line, array $columnMap): array
+    {
+        $row = [];
+
+        foreach ($columnMap as $index => $field) {
+            $row[$field] = trim((string) ($line[$index] ?? ''));
+        }
+
+        return $row;
+    }
+
+    private function normalizeRow(array $row): array
+    {
+        $row['payment_date'] = $this->parseDate($row['payment_date'] ?? '');
+        $row['amount'] = $this->parseAmount($row['amount'] ?? '');
+        $row['raw_payload'] = $this->encodeRawPayload($row);
+
+        return $row;
     }
 
     private function buildColumnMap(array $header): array
@@ -333,7 +525,7 @@ class IncomeImportService extends Model
         return $row;
     }
 
-    private function createImportRecord(int $groupId, array $file, string $storedFileName, string $fileHash, int $totalRows): int
+    private function createImportRecord(int $groupId, string $originalName, string $storedFileName, string $fileHash, int $totalRows): int
     {
         $statement = $this->db()->prepare(
             'INSERT INTO trx_imports
@@ -345,7 +537,7 @@ class IncomeImportService extends Model
             'group_id' => $groupId,
             'file_name' => $storedFileName,
             'file_hash' => $fileHash,
-            'original_file_name' => $file['name'],
+            'original_file_name' => $originalName,
             'source' => 'csv_income',
             'total_rows' => $totalRows,
             'status' => 'processing',
@@ -354,7 +546,7 @@ class IncomeImportService extends Model
         return (int) $this->db()->lastInsertId();
     }
 
-    private function updateImportRecord(int $importId, int $successRows, int $duplicateRows, string $status): void
+    private function updateImportRecord(int $importId, int $successRows, int $duplicateRows, int $failedRows, string $status): void
     {
         $statement = $this->db()->prepare(
             'UPDATE trx_imports
@@ -368,8 +560,48 @@ class IncomeImportService extends Model
             'id' => $importId,
             'success_rows' => $successRows,
             'duplicate_rows' => $duplicateRows,
-            'failed_rows' => $duplicateRows,
+            'failed_rows' => $failedRows,
             'status' => $status,
+        ]);
+    }
+
+    private function incomeRowExists(int $groupId, array $row): bool
+    {
+        $statement = $this->db()->prepare(
+            'SELECT COUNT(*)
+             FROM trx_incomes
+             WHERE group_id = :group_id
+               AND deleted_at IS NULL
+               AND transaction_date = :transaction_date
+               AND COALESCE(reference_no, \'\') = :reference_no
+               AND COALESCE(external_id, \'\') = :external_id
+               AND COALESCE(description, \'\') = :description
+               AND amount = :amount
+               AND COALESCE(payment_method, \'\') = :payment_method'
+        );
+        $statement->execute([
+            'group_id' => $groupId,
+            'transaction_date' => $row['payment_date'],
+            'reference_no' => $row['reference_id'],
+            'external_id' => $row['username'],
+            'description' => $row['description'],
+            'amount' => $row['amount'],
+            'payment_method' => $row['payment_type'],
+        ]);
+
+        return (int) $statement->fetchColumn() > 0;
+    }
+
+    private function duplicateKey(int $groupId, array $row): string
+    {
+        return implode('|', [
+            $groupId,
+            $row['payment_date'],
+            $row['reference_id'],
+            $row['username'],
+            $row['description'],
+            number_format((float) $row['amount'], 2, '.', ''),
+            $row['payment_type'],
         ]);
     }
 

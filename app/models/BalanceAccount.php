@@ -49,7 +49,36 @@ class BalanceAccount extends Model
 
     public function expectedBalance(): float
     {
-        $statement = $this->db()->query('SELECT COALESCE(SUM(debit - credit), 0) FROM trx_ledger');
+        $summary = $this->balanceSummary();
+
+        return $summary['expected_balance'];
+    }
+
+    public function balanceSummary(): array
+    {
+        $income = $this->sumColumn('trx_incomes', 'amount', 'deleted_at IS NULL');
+        $expense = $this->sumColumn('trx_expenses', 'amount', "approval_status = 'approved'");
+        $cashAdvanceDisbursed = $this->sumColumn('trx_cash_advances', 'amount');
+        $cashAdvanceOutstanding = $this->sumColumn('trx_cash_advances', 'remaining_amount', 'status = 0 AND remaining_amount > 0');
+
+        return [
+            'total_income' => $income,
+            'total_expense' => $expense,
+            'total_cash_advance' => $cashAdvanceOutstanding,
+            'total_cash_advance_disbursed' => $cashAdvanceDisbursed,
+            'expected_balance' => $income - $expense - $cashAdvanceDisbursed,
+        ];
+    }
+
+    private function sumColumn(string $table, string $column, string $where = ''): float
+    {
+        $sql = "SELECT COALESCE(SUM({$column}), 0) FROM {$table}";
+
+        if ($where !== '') {
+            $sql .= " WHERE {$where}";
+        }
+
+        $statement = $this->db()->query($sql);
 
         return (float) $statement->fetchColumn();
     }

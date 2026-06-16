@@ -1,3 +1,5 @@
+<?php $currentUrl = $_SERVER['REQUEST_URI'] ?? '/profit-distribution'; ?>
+
 <div class="d-flex flex-column gap-4">
     <div>
         <h1 class="h3 mb-1">Profit Distribution</h1>
@@ -73,7 +75,7 @@
                             <td><?= e((int) $closing['paid_count']) ?> / <?= e((int) $closing['distribution_count']) ?> paid</td>
                             <td><span class="badge text-bg-secondary"><?= e($closing['status']) ?></span></td>
                             <td class="text-end">
-                                <a href="<?= e(url('/profit-distribution/' . $closing['id'])) ?>" class="btn btn-sm btn-outline-primary">Detail</a>
+                                <a href="<?= e(url('/profit-distribution/' . $closing['id'] . '?return_url=' . urlencode($currentUrl))) ?>" class="btn btn-sm btn-outline-primary">Detail</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

@@ -43,6 +43,7 @@ class ProfitDistributionController extends Controller
             'closing' => $closing,
             'distributions' => $this->profitDistributions->distributions((int) $id),
             'flash' => $_GET['message'] ?? null,
+            'returnUrl' => $this->returnUrl('/profit-distribution'),
         ]);
     }
 
@@ -55,7 +56,7 @@ class ProfitDistributionController extends Controller
             exit('404 - Distribution not found');
         }
 
-        $this->redirect('/profit-distribution/' . $closingId . '?message=paid');
+        $this->redirect($this->withFlash($this->returnUrl('/profit-distribution/' . $closingId), 'message', 'paid'));
     }
 
     private function findClosingOrFail(int $id): array
@@ -74,5 +75,27 @@ class ProfitDistributionController extends Controller
     {
         header('Location: ' . url($path));
         exit;
+    }
+
+    private function returnUrl(string $fallback): string
+    {
+        $returnUrl = trim((string) ($_POST['return_url'] ?? $_GET['return_url'] ?? ''));
+
+        if ($returnUrl === '' || ! str_starts_with($returnUrl, '/') || str_starts_with($returnUrl, '//')) {
+            return $fallback;
+        }
+
+        return $returnUrl;
+    }
+
+    private function withFlash(string $path, string $key, string $value): string
+    {
+        $parts = parse_url($path);
+        $basePath = $parts['path'] ?? '/profit-distribution';
+        parse_str($parts['query'] ?? '', $query);
+        unset($query['message'], $query['error']);
+        $query[$key] = $value;
+
+        return $basePath . '?' . http_build_query($query);
     }
 }
