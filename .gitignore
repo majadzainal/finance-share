@@ -1,5 +1,6 @@
 # Environment and local configs
 /app/config/app.php
+/app/config/database.php
 
 # Storage logs and uploads
 /storage/logs/*.log
