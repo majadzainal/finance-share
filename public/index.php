@@ -39,10 +39,24 @@ spl_autoload_register(function (string $class): void {
     }
 
     $relativeClass = substr($class, strlen($prefix));
-    $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+    $parts = explode('\\', $relativeClass);
+    
+    // Check lowercase dir: e.g. app/controllers/ClosingController.php
+    if (count($parts) > 1) {
+        $className = array_pop($parts);
+        $lowerDir = strtolower(implode('/', $parts));
+        $fileLower = $baseDir . $lowerDir . '/' . $className . '.php';
+        if (is_file($fileLower)) {
+            require_once $fileLower;
+            return;
+        }
+        $parts[] = $className;
+    }
 
+    // Check exact path: e.g. app/Controllers/ClosingController.php
+    $file = $baseDir . implode('/', $parts) . '.php';
     if (is_file($file)) {
-        require $file;
+        require_once $file;
     }
 });
 
