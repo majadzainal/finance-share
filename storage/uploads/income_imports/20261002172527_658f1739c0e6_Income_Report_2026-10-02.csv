@@ -1,0 +1,135 @@
+﻿No;Reference ID;Collector;Tanggal Bayar;Tipe Payment;Tujuan/Bank;Server;Tipe Income;Client;Alamat;Username;Profile;Jumlah;Keterangan
+1;120288-261002.110954.1743;TEXA STORE;02 Oct 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Julaeha;kp Tembong gunung;10m-Julaeha;profile-180;180.500;Pembayaran untuk periode 25 Oct 2026 => 25 Nov 2026
+2;120318-261002.085217.1743;kasandra;02 Oct 2026;COUNTER;CASH;RICKAnet;PPPOE;Sati;kp Tembong gunung;8m-sati;profile-180;180.000;"BFST038401003043560SITI NURJANA:SSPIIDJA
++ Rp180.000
+2 Oktober 2026 08:49:16"
+3;120255-261001.223547.1743;TEXA STORE;01 Oct 2026;PAYMENT GATEWAY;MONETA BRI;RICKAnet;PPPOE;Agan Suganda;kp Tembong gunung;8m-agan-suganda;profile-180;180.500;Pembayaran untuk periode 30 Sep 2026 => 01 Nov 2026
+4;149069-261001.203819.1743;kasandra;01 Oct 2026;COUNTER;CASH;RICKAnet;PPPOE;jimmy;kp Tembong gunung;10m-jimmy;profile-220;220.000;"BFST038401003043560LO DJIE MIN :CENAIDJA
++ Rp220.000
+1 Oktober 2026 07:06:06"
+5;120293-261001.155505.1743;TEXA STORE;01 Oct 2026;PAYMENT GATEWAY;MONETA MANDIRI;RICKAnet;PPPOE;Cari wijaya;kp Tembong gunung;8m-wijaya;profile-180;180.500;Pembayaran untuk periode 25 Oct 2026 => 25 Nov 2026
+6;120315-261001.085439.1743;TEXA STORE;01 Oct 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Narsiah;kp Tembong gunung;10m-Narsiah;profile-220;220.500;Pembayaran untuk periode 05 Oct 2026 => 05 Nov 2026
+7;120294-260930.221509.1743;kasandra;30 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Ulfa;kp Tembong gunung;10m-Ulfa;profile-180;180.000;"DANA20260930035604821107SITINASROH
++ Rp180.000
+30 September 2026 17:53:19
+"
+8;120251-260930.205033.1743;TEXA STORE;30 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;HENDRI HIDAYAT;kp Tembong gunung;10M-HENDRI-H.Handa;profile-220;220.500;Pembayaran untuk periode 25 Oct 2026 => 25 Nov 2026
+9;165655-260930.200418.1743;TEXA STORE;30 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;elis elah;Tembong gunung;5m-elis;profile-160;160.500;Pembayaran untuk periode 01 Oct 2026 => 01 Nov 2026
+10;120302-260930.191501.1743;TEXA STORE;30 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Ibnu Mubarok;kp Tembong gunung;IBNUMUBAROK;profile-220;220.500;Pembayaran untuk periode 05 Oct 2026 => 05 Nov 2026
+11;400026-260930.083529.1743;TEXA STORE;30 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Toko kembar pom 118;kp Tembong gunung;5m-Toko.kembar;profile-160-A-160;160.500;Pembayaran untuk periode 02 Oct 2026 => 02 Nov 2026
+12;269100-260930.074756.1743;TEXA STORE;30 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Husni Mubarok;Kontrakan H.anda;5m-husni.mubarok;profile-160-A-160;160.500;Pembayaran untuk periode 01 Oct 2026 => 01 Nov 2026
+13;120334-260929.201337.1743;TEXA STORE;29 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Ikah Mulyani;kp Tembong gunung;8m-ikah-mulyani;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 29 Oct 2026
+14;304841-260929.184431.1743;TEXA STORE;29 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Nala;kp Tembong gunung;8m-Nala;profile-180-A-180;180.500;Pembayaran untuk periode 02 Oct 2026 => 02 Nov 2026
+15;120324-260929.130341.1743;kasandra;29 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Siti Nuryani;kp Tembong gunung;10m-sitiNuryani;profile-160-A-160;160.000;"WBNKSTOR227501001061569TO038401003043560
++ Rp160.000
+29 September 2026 12:52:57"
+16;120308-260929.100337.1743;TEXA STORE;29 Sep 2026;PAYMENT GATEWAY;MONETA BRI;RICKAnet;PPPOE;Mimin Mintarsih ;kp Tembong gunung;10m-Mimin;profile-180;180.500;Pembayaran untuk periode 01 Oct 2026 => 01 Nov 2026
+17;120271-260929.075018.1743;TEXA STORE;29 Sep 2026;PAYMENT GATEWAY;MONETA BRI;RICKAnet;PPPOE;Rinem;kp Tembong gunung;5m-rinem;profile-160-A-160;160.500;Pembayaran untuk periode 24 Oct 2026 => 24 Nov 2026
+18;120285-260929.074705.1743;TEXA STORE;29 Sep 2026;PAYMENT GATEWAY;MONETA BRI;RICKAnet;PPPOE;Farel al fariq;kp Tembong gunung;8m-farel;profile-180;180.500;Pembayaran untuk periode 25 Oct 2026 => 25 Nov 2026
+19;120262-260929.070821.1743;TEXA STORE;29 Sep 2026;PAYMENT GATEWAY;MONETA MANDIRI;RICKAnet;PPPOE;MOH SYAFRUDDN /New Garage23;kp Tembong gunung;10m-SYAFRUDDN;profile-220;220.500;Pembayaran untuk periode 30 Sep 2026 => 30 Oct 2026
+20;120281-260928.185054.1743;TEXA STORE;28 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Della Septianty Lubis ;kp Tembong gunung;10M-della-septianty;profile-160-A-160;160.500;Pembayaran untuk periode 28 Sep 2026 => 28 Oct 2026
+21;120336-260927.181935.1743;TEXA STORE;27 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Mita Mustafa;kp Tembong gunung;5m-mita-mustafa;profile-160-A-160;160.500;Pembayaran untuk periode 28 Sep 2026 => 28 Oct 2026
+22;179715-260927.103629.1743;TEXA STORE;27 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Wawan;tembong gunung;8m-wawan;profile-160-A-160;160.500;Pembayaran untuk periode 29 Sep 2026 => 29 Oct 2026
+23;120275-260927.090942.1743;TEXA STORE;27 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Mamah Anyun;kp Tembong gunung;5m-mamah-anyun;profile-160-A-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 27 Oct 2026
+24;153446-260926.120123.1743;kasandra;26 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Sanah;kp Tembong gunung;5m-Sanah;profile-160;160.000;"BFST038401003043560SITI NURJANA:SSPIIDJA
++ Rp160.000
+26 September 2026 09:31:55"
+25;120280-260926.103054.1743;TEXA STORE;26 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Ladi;kp Tembong gunung;5m-Ladi;profile-160;160.500;Pembayaran untuk periode 28 Sep 2026 => 28 Oct 2026
+26;120269-260926.042005.1743;kasandra;26 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Iis Diana Putri;kp Tembong gunung;5m-iis.diana.putri;profile-160;160.000;"Transfer dari Isah Sri Candr via BRImo
++ Rp160.000
+25 September 2026 07:07:32"
+27;208355-260925.200912.1743;TEXA STORE;25 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Ivan Fianda;tembong gunung;5m-Ivan.Fianda;profile-160-A-160;160.500;Pembayaran untuk periode 26 Sep 2026 => 26 Oct 2026
+28;120270-260925.183927.1743;kasandra;25 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Darsi;kp Tembong gunung;5m-darsi;profile-160;160.000;"DANA20260925035457363964SAEPULBAHRI
++ Rp160.000
+25 September 2026 18:24:58"
+29;120297-260925.141313.1743;TEXA STORE;25 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Zul;kp Tembong gunung;8m-Zul;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+30;178587-260925.141545.1743;TEXA STORE;25 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Nendi Efendi;tembong gunung;8m-Nendi-Efendi;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+31;120310-260925.141428.1743;kasandra;25 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Mamah Ica;kp Tembong gunung;10m-mamah-ica;profile-220;220.000;25 September 2026 14:10:22 BFST038401003043560SARTIKAH :SSPIIDJA
+32;120309-260925.130234.1743;TEXA STORE;25 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Yunita Fitriani;kp Tembong gunung;8m-Yunita-bpkAnta;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+33;120305-260925.130218.1743;TEXA STORE;25 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;SITI MARIAM;kp Tembong gunung;5M-siti-mariam;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+34;120311-260925.124924.1743;TEXA STORE;25 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Winda;kp Tembong gunung;5m-winda;profile-160-A-160;160.500;Pembayaran untuk periode 26 Sep 2026 => 26 Oct 2026
+35;120322-260924.134824.1743;TEXA STORE;24 Sep 2026;PAYMENT GATEWAY;MONETA PERMATA;RICKAnet;PPPOE;Sri Andini;kp Tembong gunung;10m-sri_andini;profile-220;220.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+36;120322-260924.134824.1743;TEXA STORE;24 Sep 2026;PAYMENT GATEWAY;MONETA PERMATA;RICKAnet;PPPOE;Sri Andini;kp Tembong gunung;10m-sri_andini;profile-220;220.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+37;120307-260924.134135.1743;TEXA STORE;24 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;KAMILA REGINA;kp Tembong gunung;5m-kamila-regina;profile-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+38;120253-260924.065727.1743;TEXA STORE;24 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Tedi Wita;kp Tembong gunung;5M-TediWita;profile-160-A-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+39;120274-260924.075927.1743;TEXA STORE;24 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Aldi Reza Ramadhan;kp Tembong gunung;5m-Aldi-reza;profile-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+40;120335-260923.105658.1743;kasandra;23 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Nalem maryati;kp Tembong gunung;10m-nalem-maryati;profile-160-A-160;160.000;"Transfer dari Cici Sulista via BRImo
++ Rp160.000
+23 September 2026 09:02:12"
+41;120258-260922.042116.1743;TEXA STORE;22 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Oon sonayah;kp Tembong gunung;8m-Oon-sonayah;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+42;120316-260921.184333.1743;kasandra;21 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Yusup;kp Tembong gunung;5m-yusup;profile-160-A-160;160.000;"BFST038401003043560GILANG SANDI:SSPIIDJA
++ Rp160.000
+21 September 2026 17:01:40"
+43;120333-260920.072615.1743;kasandra;20 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Warung Rama;kp Tembong gunung;8m-warung-rama;profile-180;180.000;"DANA20260920035324526897RONIRUSTANDI
++ Rp180.000
+20 September 2026 07:13:41"
+44;120261-260920.050323.1743;TEXA STORE;20 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Siti Marfuah;kp Tembong gunung;5m-Siti-Marfuah;profile-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+45;120263-260918.191801.1743;TEXA STORE;18 Sep 2026;PAYMENT GATEWAY;MONETA BNI;RICKAnet;PPPOE;Triana;kp Tembong gunung;10m-triana;profile-220;220.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+46;183957-260918.170110.1743;TEXA STORE;18 Sep 2026;PAYMENT GATEWAY;MONETA MANDIRI;RICKAnet;PPPOE;icah pujiwati line.2;Kntrakan H.anda;10m-icah.pujiwati-atas;profile-220;220.500;Pembayaran untuk periode 21 Sep 2026 => 21 Oct 2026
+47;120265-260918.144110.1743;kasandra;18 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Samih srihandayani;kp Tembong gunung;5m-Samih-srihandayani;profile-160;160.000;"Transfer dari Engki Iskandar via BRImo
++ Rp160.000
+18 September 2026 09:37:51"
+48;120254-260918.091423.1743;TEXA STORE;18 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Siti Fatimah;kp Tembong gunung;8m-Siti-Fatimah;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+49;120279-260916.223054.1743;kasandra;16 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Damhuri;kp Tembong gunung;5m-Damhuri;profile-160;160.000;"Transfer dari Damhuri via BRImo
++ Rp160.000
+12 September 2026 13:10:05"
+50;120296-260916.103717.1743;TEXA STORE;16 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Fadil;kp Tembong gunung;5m-fadil;profile-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+51;120320-260915.120138.1743;kasandra;15 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Pak Asep;kp Tembong gunung;5m-pakAsep;profile-160-A-160;160.000;TF ke BRI MAJA JAINUL
+52;283441-260914.165228.1743;TEXA STORE;14 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Danan yoni Prasetyo;kp. Tembong gunung 10/05;5m-Danan.yoni.Prasetyo;profile-160;160.500;Pembayaran untuk periode 13 Sep 2026 => 14 Oct 2026
+53;359926-260914.093639.1743;TEXA STORE;14 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Jaja Hamdani putra;kp Tembong gunung;8m-Jaja.Hamdani.putra;profile-180-A-180;180.500;Pembayaran untuk periode 14 Sep 2026 => 14 Oct 2026
+54;120317-260914.120135.1743;TEXA STORE;14 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Agus Mulyadi;kp Tembong gunung;5m-agus-mulyadi;profile-160;160.500;Pembayaran untuk periode 23 Sep 2026 => 23 Oct 2026
+55;120341-260914.085217.1743;TEXA STORE;14 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Ramdani Nurdiansyah;kp Tembong gunung;8m-ramdani-nurdiansyah;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+56;217187-260914.070347.1743;TEXA STORE;14 Sep 2026;PAYMENT GATEWAY;MONETA BRI;RICKAnet;PPPOE;kaman Danu herlambang;kp tembong gunung;8m-kaman.Danu;profile-180;180.500;Pembayaran untuk periode 14 Sep 2026 => 14 Oct 2026
+57;404390-260914.052634.1743;TEXA STORE;14 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Siti Nurjanah;Kp. Tembong gununb rt 009/005 Sukamahi;Bu.Nur-5m;profile-160-A-160;160.500;Pembayaran untuk periode 13 Sep 2026 => 14 Oct 2026
+58;240253-260912.193259.1743;TEXA STORE;12 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Mulia Sabina;ricka;8m-Mulia.Sabina;profile-180-A-180;180.500;Pembayaran untuk periode 11 Sep 2026 => 12 Oct 2026
+59;120251-260911.230120.1743;TEXA STORE;11 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;HENDRI HIDAYAT;kp Tembong gunung;10M-HENDRI-H.Handa;profile-220;220.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+60;208379-260911.085540.1743;TEXA STORE;11 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Nurhasanah;tembong gunung;8m-Nurhasanah;profile-180;180.500;Pembayaran untuk periode 11 Sep 2026 => 11 Oct 2026
+61;120264-260911.021728.1743;TEXA STORE;11 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;NURSIAH;kp Tembong gunung;8m-NURSIAH;profile-180;180.500;Pembayaran untuk periode 10 Sep 2026 => 11 Oct 2026
+62;120323-260911.005624.1743;TEXA STORE;11 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Ahmad Alfega Rosada;kp Tembong gunung;10m-ahmad_alfega;profile-180;180.500;Pembayaran untuk periode 13 Sep 2026 => 13 Oct 2026
+63;120321-260910.194458.1743;RICKAnet;10 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Pak Enjang;kp Tembong gunung;5m-enjang;profile-160;160.000;"GoPay Bank Transfer ID2625342334302XLC
++ Rp160.000
+10 September 2026 18:45:37"
+64;120252-260910.131907.1743;kasandra;10 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Irna Sari;kp Tembong gunung;5M-irna.sari;profile-160-A-160;160.000;"DANA20260910035128151925IRNASARI
++ Rp160.000
+10 September 2026 12:48:15"
+65;177385-260909.070330.1743;TEXA STORE;09 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Pini Reonita;TEMBONG GUNUNG;10m-Pini-Reonita;profile-160;160.500;Pembayaran untuk periode 08 Sep 2026 => 09 Oct 2026
+66;377675-260908.171207.1743;TEXA STORE;08 Sep 2026;PAYMENT GATEWAY;MONETA ALFAMART;RICKAnet;PPPOE;Herni;kp Tembong gunung;5m-herni;profile-160-A-160;160.500;Pembayaran untuk periode 07 Sep 2026 => 08 Oct 2026
+67;120299-260908.084924.1743;TEXA STORE;08 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;HERU HERMANTO;kp Tembong gunung;8m-Heru;profile-180;180.500;Pembayaran untuk periode 02 Sep 2026 => 08 Oct 2026
+68;182888-260908.072504.1743;TEXA STORE;08 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Ayu Anjani;tembong gunung;5m-Ayu.Anjani;profile-160;160.500;Pembayaran untuk periode 08 Sep 2026 => 08 Oct 2026
+69;120267-260907.203235.1743;TEXA STORE;07 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Dara;kp Tembong gunung;5m-dara;profile-160;160.500;Pembayaran untuk periode 14 Sep 2026 => 14 Oct 2026
+70;120283-260907.183522.1743;kasandra;07 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Siti Jubaedah;kp Tembong gunung;8m-Jubaedah;profile-180-A-180;180.000;"DANA20260907035112656374SITIJUBAEDAH
++ Rp180.000
+7 September 2026 16:57:08"
+71;120282-260907.112213.1743;RICKAnet;07 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Udin;kp Tembong gunung;5m-udin;profile-160-A-160;160.000;"BFST038401003043560SAEPUDIN BIN:BMRIIDJA
++ Rp160.000
+7 September 2026 11:13:43"
+72;163700-260907.013044.1743;TEXA STORE;07 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Yanti;H.Ciman;5m-Yanti;profile-160;160.500;Pembayaran untuk periode 10 Sep 2026 => 10 Oct 2026
+73;120289-260906.135909.1743;TEXA STORE;06 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Euis Elisnawati;kp Tembong gunung;5m-euis-elisnawati;profile-160;160.500;Pembayaran untuk periode 11 Sep 2026 => 11 Oct 2026
+74;120273-260906.111124.1743;TEXA STORE;06 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Nabilah Agustin;kp Tembong gunung;8m-nabilah;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+75;120286-260906.080817.1743;TEXA STORE;06 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Kaja Miharja;kp Tembong gunung;10m-kaja;profile-220;220.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+76;120287-260906.060334.1743;TEXA STORE;06 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Saikem setiawati;TEMBONG GUNUNG;10m-Saikem;profile-160-A-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+77;238075-260906.023626.1743;TEXA STORE;06 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;fajar nuriman;Tembong gunung;5m-fajar.nuriman;profile-160;160.500;Pembayaran untuk periode 07 Sep 2026 => 07 Oct 2026
+78;120292-260905.211138.1743;kasandra;05 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Supandi Syaputra;kp Tembong gunung;8m-Supandi;profile-180;180.000;"DANA20260905035037640390KARSIHSRIMUL
++ Rp180.000
+5 September 2026 20:56:15"
+79;120339-260905.101007.1743;kasandra;05 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Yayah Chaca;kp Tembong gunung;5m-yayah-rokayah;profile-160-A-160;160.000;"Transfer dari Yayah Rokayah via BRImo
++ Rp160.000
+5 September 2026 09:32:30"
+80;120331-260905.095253.1743;TEXA STORE;05 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Wahyu tegar permana;kp Tembong gunung;5m-wahyu-tegar-permana;profile-160-A-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+81;120318-260904.140113.1743;kasandra;04 Sep 2026;COUNTER;CASH;RICKAnet;PPPOE;Sati;kp Tembong gunung;8m-sati;profile-180;180.000;"BFST038401003043560SITI NURJANA:SSPIIDJA
++ Rp180.000
+2 September 2026 09:20:13"
+82;120288-260904.081853.1743;TEXA STORE;04 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Julaeha;kp Tembong gunung;10m-Julaeha;profile-180;180.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+83;120314-260903.133442.1743;TEXA STORE;03 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Ellis sulistiawati;kp Tembong gunung;5m_ferdiansyah_bpAnta;profile-160-A-160;160.500;Pembayaran untuk periode 05 Sep 2026 => 05 Oct 2026
+84;120332-260903.091023.1743;TEXA STORE;03 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;MUKSIN;kp Tembong gunung;10m-muksin;profile-180;180.500;Pembayaran untuk periode 02 Sep 2026 => 03 Oct 2026
+85;120325-260903.055038.1743;TEXA STORE;03 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Dedeh Nurlaela;kp Tembong gunung;10-Dedeh;profile-220;220.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+86;120304-260902.100729.1743;TEXA STORE;02 Sep 2026;PAYMENT GATEWAY;MONETA DANA;RICKAnet;PPPOE;Ega yulia;kp Tembong gunung;5M-ega-yulia;profile-160-A-160;160.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+87;120259-260901.193149.1743;TEXA STORE;02 Sep 2026;PAYMENT GATEWAY;MONETA BRI;RICKAnet;PPPOE;SURYANI;kp Tembong gunung;5m-Suryani;profile-160-A-160;160.500;Pembayaran untuk periode 30 Aug 2026 => 01 Oct 2026
+88;257276-260902.055056.1743;TEXA STORE;02 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Rizky Maulana;kp Tembong gunung;8m-Rizkh.maulana;profile-180;180.500;Pembayaran untuk periode 01 Sep 2026 => 02 Oct 2026
+89;120337-260901.184310.1743;TEXA STORE;01 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Yayah Rokayah 02;kp Tembong gunung;10m-yayah-sambelIjo-02;profile-220;220.500;Pembayaran untuk periode 02 Sep 2026 => 02 Oct 2026
+90;120266-260901.115115.1743;TEXA STORE;01 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Ikhwan;kp Tembong gunung;8m-ikhwan;profile-180;180.500;Pembayaran untuk periode 02 Sep 2026 => 02 Oct 2026
+91;269100-260901.090438.1743;TEXA STORE;01 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Husni Mubarok;Kontrakan H.anda;5m-husni.mubarok;profile-160-A-160;160.500;Pembayaran untuk periode 31 Aug 2026 => 01 Oct 2026
+92;120276-260901.081111.1743;TEXA STORE;01 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Faqih;kp Tembong gunung;10m-faqih;profile-220;220.500;Pembayaran untuk periode 25 Sep 2026 => 25 Oct 2026
+93;120315-260901.080639.1743;TEXA STORE;01 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Narsiah;kp Tembong gunung;10m-Narsiah;profile-220;220.500;Pembayaran untuk periode 05 Sep 2026 => 05 Oct 2026
+94;120315-260901.080639.1743;TEXA STORE;01 Sep 2026;PAYMENT GATEWAY;MONETA QRIS;RICKAnet;PPPOE;Narsiah;kp Tembong gunung;10m-Narsiah;profile-220;220.500;Pembayaran untuk periode 05 Sep 2026 => 05 Oct 2026
+;;;;;;;;;;;TOTAL:;17137000;

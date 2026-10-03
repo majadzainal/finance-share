@@ -1,0 +1,48 @@
+﻿No;Reference ID;Collector;Tanggal Bayar;Tipe Payment;Tujuan/Bank;Server;Tipe Income;Client;Alamat;Username;Profile;Jumlah;Keterangan
+1;120321-260615.110716.1743;RICKAnet;15 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Pak Enjang;kp Tembong gunung;5m-enjang;profile-160;160.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+2;217187-260614.202329.1743;TEXA STORE;14 Jun 2026;PAYMENT GATEWAY;BRI;RICKAnet;PPPOE;kaman Danu herlambang;kp tembong gunung;8m-kaman.Danu;profile-180;180.500;Pembayaran untuk periode 14 Jun 2026 => 14 Jul 2026
+3;120282-260614.191647.1743;RICKAnet;14 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Udin;kp Tembong gunung;5m-udin;profile-160-A-160;160.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+4;120267-260614.060947.1743;RICKAnet;14 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Dara;kp Tembong gunung;5m-dara;profile-160;160.000;Pembayaran PPPoE untuk Expired tanggal 14-Jul-2026
+5;120260-260613.074456.1743;TEXA STORE;13 Jun 2026;PAYMENT GATEWAY;MANDIRI;RICKAnet;PPPOE;Icah pujiwati;kp Tembong gunung;10m-icah-pujiwati;profile-220;220.500;Pembayaran untuk periode 11 Jun 2026 => 13 Jul 2026
+6;183957-260612.190809.1743;TEXA STORE;12 Jun 2026;PAYMENT GATEWAY;MANDIRI;RICKAnet;PPPOE;icah pujiwati line.2;Kntrakan H.anda;10m-icah.pujiwati-atas;profile-220;220.500;Pembayaran untuk periode 17 Jun 2026 => 17 Jul 2026
+7;120251-260612.111505.1743;TEXA STORE;12 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;HENDRI HIDAYAT;kp Tembong gunung;10M-HENDRI-H.Handa;profile-220;220.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+8;314323-260612.091712.1743;TEXA STORE;12 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Arif setiawan;kp Tembong gunung;10m-Arif.setiawan;profile-160-A-160;160.500;Pembayaran untuk periode 14 Jun 2026 => 14 Jul 2026
+9;120341-260612.090026.1743;TEXA STORE;12 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Ramdani Nurdiansyah;kp Tembong gunung;8m-ramdani-nurdiansyah;profile-180;180.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+10;283441-260611.225538.1743;TEXA STORE;11 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Danan yoni Prasetyo;kp. Tembong gunung 10/05;5m-Danan.yoni.Prasetyo;profile-160;160.500;Pembayaran untuk periode 12 Jun 2026 => 12 Jul 2026
+11;149069-260611.094213.1743;RICKAnet;11 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;jimmy;kp Tembong gunung;10m-jimmy;profile-220;220.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+12;120323-260610.154028.1743;TEXA STORE;10 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Ahmad Alfega Rosada;kp Tembong gunung;10m-ahmad_alfega;profile-180;180.500;Pembayaran untuk periode 13 Jun 2026 => 13 Jul 2026
+13;120296-260610.105340.1743;TEXA STORE;10 Jun 2026;PAYMENT GATEWAY;MANDIRI;RICKAnet;PPPOE;Fadil;kp Tembong gunung;5m-fadil;profile-160;160.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+14;120287-260609.160823.1743;RICKAnet;09 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Saikem setiawati;TEMBONG GUNUNG;10m-Saikem;profile-220;220.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+15;120334-260609.160125.1743;RICKAnet;09 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Ikah Mulyani;kp Tembong gunung;8m-ikah-mulyani;profile-180;180.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+16;120333-260609.155803.1743;RICKAnet;09 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Warung Rama;kp Tembong gunung;8m-warung-rama;profile-180;180.000;Pembayaran PPPoE untuk Expired tanggal 16-Jul-2026
+17;120273-260609.155703.1743;RICKAnet;09 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Nabilah Agustin;kp Tembong gunung;8m-nabilah;profile-180;180.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+18;120308-260609.105149.1743;TEXA STORE;09 Jun 2026;PAYMENT GATEWAY;BANK TRANSFER BRI;RICKAnet;PPPOE;Mimin Mintarsih ;kp Tembong gunung;10m-Mimin;profile-180;180.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+19;120289-260609.101807.1743;RICKAnet;09 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Euis Elisnawati;kp Tembong gunung;5m-euis-elisnawati;profile-160;160.000;Pembayaran PPPoE untuk Expired tanggal 11-Jul-2026
+20;120331-260609.065747.1743;TEXA STORE;09 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Wahyu tegar permana;kp Tembong gunung;5m-wahyu-tegar-permana;profile-160-A-160;160.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+21;120339-260608.215655.1743;RICKAnet;08 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Yayah Chaca;kp Tembong gunung;5m-yayah-rokayah;profile-160-A-160;160.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+22;120276-260608.215007.1743;RICKAnet;08 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Faqih;kp Tembong gunung;10m-faqih;profile-220;220.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+23;120252-260608.214509.1743;RICKAnet;08 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Irna Sari;kp Tembong gunung;5M-irna.sari;profile-160-A-160;160.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+24;182888-260608.071339.1743;TEXA STORE;08 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Ayu Anjani;tembong gunung;5m-Ayu.Anjani;profile-160;160.500;Pembayaran untuk periode 07 Jun 2026 => 08 Jul 2026
+25;120264-260608.063811.1743;TEXA STORE;08 Jun 2026;PAYMENT GATEWAY;EWALLET DANA;RICKAnet;PPPOE;NURSIAH;kp Tembong gunung;8m-NURSIAH;profile-180;180.500;Pembayaran untuk periode 07 Jun 2026 => 08 Jul 2026
+26;120324-260607.180643.1743;RICKAnet;07 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Siti Nuryani;kp Tembong gunung;10m-sitiNuryani;profile-160-A-160;160.000;Pembayaran PPPoE untuk Expired tanggal 29-Jun-2026
+27;120318-260607.180400.1743;RICKAnet;07 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Sati;kp Tembong gunung;8m-sati;profile-180;180.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+28;177385-260607.175407.1743;TEXA STORE;07 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Pini Reonita;TEMBONG GUNUNG;10m-Pini-Reonita;profile-160;160.500;Pembayaran untuk periode 06 Jun 2026 => 07 Jul 2026
+29;238075-260606.185200.1743;TEXA STORE;06 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;fajar nuriman;Tembong gunung;5m-fajar.nuriman;profile-160;160.500;Pembayaran untuk periode 07 Jun 2026 => 07 Jul 2026
+30;163700-260606.174513.1743;TEXA STORE;06 Jun 2026;PAYMENT GATEWAY;EWALLET DANA;RICKAnet;PPPOE;Yanti;H.Ciman;5m-Yanti;profile-160;160.500;Pembayaran untuk periode 08 Jun 2026 => 08 Jul 2026
+31;120314-260605.073652.1743;TEXA STORE;05 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Ferdiansyah Eko Prasetyo;kp Tembong gunung;5m_ferdiansyah_bpAnta;profile-160-A-160;160.500;Pembayaran untuk periode 05 Jun 2026 => 05 Jul 2026
+32;120263-260605.053947.1743;TEXA STORE;05 Jun 2026;PAYMENT GATEWAY;BNI;RICKAnet;PPPOE;Triana;kp Tembong gunung;10m-triana;profile-220;220.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+33;120290-260604.223412.1743;TEXA STORE;04 Jun 2026;PAYMENT GATEWAY;PERMATA;RICKAnet;PPPOE;Aat Sukatma;kp Tembong gunung;8m-aat-sukatma;profile-180;180.500;Pembayaran untuk periode 03 Jun 2026 => 04 Jul 2026
+34;120304-260604.194235.1743;TEXA STORE;04 Jun 2026;PAYMENT GATEWAY;EWALLET DANA;RICKAnet;PPPOE;Ega yulia;kp Tembong gunung;5M-ega-yulia;profile-160-A-160;160.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+35;120294-260603.184247.1743;RICKAnet;03 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Ulfa;kp Tembong gunung;10m-Ulfa;profile-180;180.000;Pembayaran PPPoE untuk Expired tanggal 01-Jul-2026
+36;304842-260603.163723.1743;TEXA STORE;03 Jun 2026;PAYMENT GATEWAY;BANK TRANSFER BNI;RICKAnet;PPPOE;sely melviar;kp Tembong gunung;10m-sely.melviar;profile-220-A-220;220.500;Pembayaran untuk periode 06 Jun 2026 => 06 Jul 2026
+37;120309-260603.092942.1743;TEXA STORE;03 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Yunita Fitriani;kp Tembong gunung;8m-Yunita-bpkAnta;profile-180;180.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+38;120325-260603.090415.1743;TEXA STORE;03 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Dedeh Nurlaela;kp Tembong gunung;10-Dedeh;profile-220;220.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+39;176592-260602.101207.1743;TEXA STORE;02 Jun 2026;PAYMENT GATEWAY;BJB;RICKAnet;PPPOE;SDN Sukamahi 02;Kp.Tembong gunung Rt 10/05 Desa Sukamahi Kec. Cikarang Pusat;SDN-Sukamahi;profile-375;375.500;Pembayaran untuk periode 17 Jun 2026 => 17 Jul 2026
+40;120338-260601.232843.1743;RICKAnet;01 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Saja supriadi;kp Tembong gunung;8m-saja-supriadi;profile-180;180.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+41;120288-260601.172703.1743;RICKAnet;01 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Julaeha;kp Tembong gunung;10m-Julaeha;profile-180;180.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+42;257276-260601.144900.1743;TEXA STORE;01 Jun 2026;PAYMENT GATEWAY;BRI;RICKAnet;PPPOE;Rizky Maulana;kp Tembong gunung;8m-Rizkh.maulana;profile-180;180.500;Pembayaran untuk periode 01 Jun 2026 => 01 Jul 2026
+43;120258-260601.122114.1743;RICKAnet;01 Jun 2026;COUNTER;CASH;RICKAnet;PPPOE;Oon sonayah;kp Tembong gunung;8m-Oon-sonayah;profile-180;180.000;Pembayaran PPPoE untuk Expired tanggal 25-Jul-2026
+44;120266-260601.110420.1743;TEXA STORE;01 Jun 2026;PAYMENT GATEWAY;MANDIRI;RICKAnet;PPPOE;Ikhwan;kp Tembong gunung;8m-ikhwan;profile-180;180.500;Pembayaran untuk periode 01 Jun 2026 => 01 Jul 2026
+45;120315-260601.103252.1743;TEXA STORE;01 Jun 2026;PAYMENT GATEWAY;QRIS;RICKAnet;PPPOE;Narsiah;kp Tembong gunung;10m-Narsiah;profile-220;220.500;Pembayaran untuk periode 05 Jun 2026 => 05 Jul 2026
+46;120293-260601.074439.1743;TEXA STORE;01 Jun 2026;PAYMENT GATEWAY;MANDIRI;RICKAnet;PPPOE;Cari wijaya;kp Tembong gunung;8m-wijaya;profile-180;180.500;Pembayaran untuk periode 25 Jun 2026 => 25 Jul 2026
+;;;;;;;;;;;TOTAL:;8549000;

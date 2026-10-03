@@ -8,6 +8,7 @@ $menus = [
     ['key' => 'income', 'label' => 'Income', 'url' => url('/income')],
     ['key' => 'expenses', 'label' => 'Expenses', 'url' => url('/expenses')],
     ['key' => 'cash_advances', 'label' => 'Cash Advances / Kasbon', 'url' => url('/cash-advances')],
+    ['key' => 'group_savings', 'label' => 'Tabungan Group', 'url' => url('/group-savings')],
     ['key' => 'account_balances', 'label' => 'Saldo Rekening', 'url' => url('/account-balances')],
     ['key' => 'closing', 'label' => 'Closing', 'url' => url('/closing')],
     ['key' => 'profit_distribution', 'label' => 'Profit Distribution', 'url' => url('/profit-distribution')],

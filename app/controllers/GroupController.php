@@ -54,12 +54,15 @@ class GroupController extends Controller
 
     public function show(string $id): string
     {
-        $group = $this->findOrFail((int) $id);
+        $groupId = (int) $id;
+        $group = $this->findOrFail($groupId);
+        $savingsBalance = (new \App\Models\GroupSavings())->getBalance($groupId);
 
         return $this->layout('groups.show', [
             'title' => 'Group Detail',
             'activeMenu' => 'groups',
             'group' => $group,
+            'savingsBalance' => $savingsBalance,
         ]);
     }
 

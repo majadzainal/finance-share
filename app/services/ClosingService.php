@@ -15,10 +15,11 @@ class ClosingService extends Model
         string $periodEnd,
         string $closedBy = 'system',
         int $transferMethodId = 0,
-        float $transferFeeAmount = 0.0
+        float $transferFeeAmount = 0.0,
+        float $savingsAmount = 0.0
     ): int
     {
-        $preview = (new ClosingPreviewService())->preview($groupId, $periodStart, $periodEnd, $transferFeeAmount);
+        $preview = (new ClosingPreviewService())->preview($groupId, $periodStart, $periodEnd, $transferFeeAmount, $savingsAmount);
 
         if (! $preview['share_is_valid']) {
             throw new RuntimeException('Total share_percent harus 100% sebelum closing bisa diproses.');
@@ -36,6 +37,19 @@ class ClosingService extends Model
             $closingId = $this->insertClosing($groupId, $periodStart, $periodEnd, $preview, $closedBy);
             $this->lockIncomes($closingId, $groupId, $periodStart, $periodEnd);
             $this->lockExpenses($closingId, $groupId, $periodStart, $periodEnd);
+
+            if (($preview['savings_amount'] ?? 0) > 0) {
+                (new \App\Models\GroupSavings())->recordDeposit(
+                    $groupId,
+                    (float) $preview['savings_amount'],
+                    $periodEnd,
+                    'closing',
+                    $closingId,
+                    'Penyisihan Tabungan Closing Periode ' . $periodStart . ' s/d ' . $periodEnd,
+                    'CLOSING-' . $closingId,
+                    $closedBy
+                );
+            }
 
             foreach ($preview['members'] as $member) {
                 $cashAdvanceCut = $this->cutCashAdvances(
@@ -84,10 +98,12 @@ class ClosingService extends Model
             "INSERT INTO trx_closings
                 (group_id, period_start, period_end, total_income, total_expense,
                  total_cash_advance, total_cash_advance_payment, net_profit,
+                 savings_amount, distributable_profit,
                  status, closed_at, closed_by)
              VALUES
                 (:group_id, :period_start, :period_end, :total_income, :total_expense,
                  :total_cash_advance, :total_cash_advance_payment, :net_profit,
+                 :savings_amount, :distributable_profit,
                  'closed', NOW(), :closed_by)"
         );
         $totalCashAdvanceCut = array_sum(array_map(static fn ($member) => (float) $member['cash_advance_cut'], $preview['members']));
@@ -100,6 +116,8 @@ class ClosingService extends Model
             'total_cash_advance' => array_sum(array_map(static fn ($member) => (float) $member['outstanding_kasbon'], $preview['members'])),
             'total_cash_advance_payment' => $totalCashAdvanceCut,
             'net_profit' => $preview['net_profit'],
+            'savings_amount' => $preview['savings_amount'] ?? 0,
+            'distributable_profit' => $preview['distributable_profit'] ?? $preview['net_profit'],
             'closed_by' => $closedBy,
         ]);
 
@@ -267,6 +285,17 @@ class ClosingService extends Model
             [null, '4000', 'Income', $preview['total_income'], 0, 'Closing income'],
             [null, '5000', 'Expense', 0, $preview['total_expense'], 'Closing expense'],
         ];
+
+        if (($preview['savings_amount'] ?? 0) > 0) {
+            $entries[] = [
+                null,
+                '3100',
+                'Group Savings',
+                0,
+                (float) $preview['savings_amount'],
+                'Penyisihan Tabungan Toko Closing Periode ' . $preview['period_start'] . ' s/d ' . $preview['period_end'],
+            ];
+        }
 
         foreach ($preview['members'] as $member) {
             $entries[] = [

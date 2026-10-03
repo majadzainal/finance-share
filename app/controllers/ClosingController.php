@@ -31,6 +31,7 @@ class ClosingController extends Controller
             'period_end' => trim($_POST['period_end'] ?? ''),
             'transfer_method_id' => (int) ($_POST['transfer_method_id'] ?? 0),
             'transfer_fee_amount' => (float) str_replace(',', '.', trim($_POST['transfer_fee_amount'] ?? '0')),
+            'savings_amount' => (float) str_replace(',', '.', trim($_POST['savings_amount'] ?? '0')),
         ];
         $preview = null;
         $error = null;
@@ -40,7 +41,8 @@ class ClosingController extends Controller
                 $input['group_id'],
                 $input['period_start'],
                 $input['period_end'],
-                $input['transfer_fee_amount']
+                $input['transfer_fee_amount'],
+                $input['savings_amount']
             );
         } catch (RuntimeException $exception) {
             $error = $exception->getMessage();
@@ -61,6 +63,7 @@ class ClosingController extends Controller
             'period_end' => trim($_POST['period_end'] ?? ''),
             'transfer_method_id' => (int) ($_POST['transfer_method_id'] ?? 0),
             'transfer_fee_amount' => (float) str_replace(',', '.', trim($_POST['transfer_fee_amount'] ?? '0')),
+            'savings_amount' => (float) str_replace(',', '.', trim($_POST['savings_amount'] ?? '0')),
         ];
         $preview = null;
         $error = null;
@@ -71,9 +74,10 @@ class ClosingController extends Controller
                 $input['group_id'],
                 $input['period_start'],
                 $input['period_end'],
-                'admin',
+                $_SESSION['user']['username'] ?? 'admin',
                 $input['transfer_method_id'],
-                $input['transfer_fee_amount']
+                $input['transfer_fee_amount'],
+                $input['savings_amount']
             );
             $success = 'Closing berhasil diproses dengan ID #' . $closingId . '.';
         } catch (RuntimeException $exception) {
@@ -102,6 +106,7 @@ class ClosingController extends Controller
                 'period_end' => date('Y-m-t'),
                 'transfer_method_id' => 0,
                 'transfer_fee_amount' => 0,
+                'savings_amount' => 0,
             ],
             'preview' => null,
             'error' => null,
@@ -116,7 +121,8 @@ class ClosingController extends Controller
                 $input['group_id'],
                 $input['period_start'],
                 $input['period_end'],
-                (float) ($input['transfer_fee_amount'] ?? 0)
+                (float) ($input['transfer_fee_amount'] ?? 0),
+                (float) ($input['savings_amount'] ?? 0)
             );
         } catch (RuntimeException) {
             return null;

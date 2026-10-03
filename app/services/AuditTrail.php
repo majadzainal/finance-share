@@ -10,7 +10,7 @@ class AuditTrail
     public static function record(string $event, ?array $payload = null): void
     {
         try {
-            $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+            $path = request_path($_SERVER['REQUEST_URI'] ?? '/');
             $user = $_SESSION['user'] ?? [];
 
             (new AuditLog())->create([

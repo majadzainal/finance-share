@@ -8,6 +8,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS trx_ledger;
 DROP TABLE IF EXISTS trx_audit_logs;
+DROP TABLE IF EXISTS trx_group_savings;
 DROP TABLE IF EXISTS trx_profit_distributions;
 DROP TABLE IF EXISTS trx_closings;
 DROP TABLE IF EXISTS trx_cash_advance_payments;
@@ -181,6 +182,8 @@ CREATE TABLE trx_closings (
     total_cash_advance DECIMAL(18,2) NOT NULL DEFAULT 0.00,
     total_cash_advance_payment DECIMAL(18,2) NOT NULL DEFAULT 0.00,
     net_profit DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    savings_amount DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    distributable_profit DECIMAL(18,2) NOT NULL DEFAULT 0.00,
     status ENUM('draft', 'closed', 'paid', 'void') NOT NULL DEFAULT 'draft',
     closed_at DATETIME NULL,
     closed_by VARCHAR(100) NULL,
@@ -191,6 +194,28 @@ CREATE TABLE trx_closings (
     KEY idx_trx_closings_status (status),
     CONSTRAINT fk_trx_closings_group_id FOREIGN KEY (group_id) REFERENCES mst_groups (id),
     CONSTRAINT chk_trx_closings_period CHECK (period_start <= period_end)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE trx_group_savings (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    group_id BIGINT UNSIGNED NOT NULL,
+    closing_id BIGINT UNSIGNED NULL,
+    transaction_date DATE NOT NULL,
+    type ENUM('deposit', 'withdrawal') NOT NULL,
+    amount DECIMAL(18,2) NOT NULL,
+    source VARCHAR(50) NOT NULL DEFAULT 'closing',
+    reference_no VARCHAR(100) NULL,
+    description VARCHAR(255) NULL,
+    receipt_file VARCHAR(255) NULL,
+    created_by VARCHAR(100) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY idx_trx_group_savings_group_date (group_id, transaction_date),
+    KEY idx_trx_group_savings_closing_id (closing_id),
+    KEY idx_trx_group_savings_type (type),
+    CONSTRAINT fk_trx_group_savings_group_id FOREIGN KEY (group_id) REFERENCES mst_groups (id),
+    CONSTRAINT fk_trx_group_savings_closing_id FOREIGN KEY (closing_id) REFERENCES trx_closings (id),
+    CONSTRAINT chk_trx_group_savings_amount CHECK (amount > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE trx_incomes (

@@ -7,7 +7,13 @@ use RuntimeException;
 
 class ClosingPreviewService extends Model
 {
-    public function preview(int $groupId, string $periodStart, string $periodEnd, float $transferFeeAmount = 0.0): array
+    public function preview(
+        int $groupId,
+        string $periodStart,
+        string $periodEnd,
+        float $transferFeeAmount = 0.0,
+        float $savingsAmount = 0.0
+    ): array
     {
         $this->validate($groupId, $periodStart, $periodEnd);
 
@@ -17,12 +23,15 @@ class ClosingPreviewService extends Model
         $totalExpense = $baseExpense + $transferFeeAmount;
         $openingBalance = $this->openingBalance($groupId, $periodStart);
         $netProfit = $totalIncome - $totalExpense;
+        $savingsAmount = max(0, $savingsAmount);
+        $distributableProfit = max(0, $netProfit - $savingsAmount);
+
         $members = $this->groupMembers($groupId);
         $shareTotal = array_sum(array_map(static fn ($member) => (float) $member['share_percent'], $members));
         $rows = [];
 
         foreach ($members as $member) {
-            $grossShareAmount = round($netProfit * ((float) $member['share_percent'] / 100), 2);
+            $grossShareAmount = round($distributableProfit * ((float) $member['share_percent'] / 100), 2);
             $outstandingKasbon = $this->outstandingCashAdvance($groupId, (int) $member['member_id']);
             $cashAdvanceCut = $grossShareAmount > 0 ? min($grossShareAmount, $outstandingKasbon) : 0;
 
@@ -38,6 +47,11 @@ class ClosingPreviewService extends Model
             ];
         }
 
+        $warnings = $this->warnings($groupId, $periodStart, $periodEnd, $shareTotal);
+        if ($savingsAmount > 0 && $savingsAmount > $netProfit) {
+            $warnings[] = 'Alokasi tabungan (Rp ' . number_format($savingsAmount, 0, ',', '.') . ') melebihi laba bersih (Rp ' . number_format($netProfit, 0, ',', '.') . ').';
+        }
+
         return [
             'group' => $this->group($groupId),
             'period_start' => $periodStart,
@@ -48,10 +62,12 @@ class ClosingPreviewService extends Model
             'transfer_fee_amount' => $transferFeeAmount,
             'total_expense' => $totalExpense,
             'net_profit' => $netProfit,
+            'savings_amount' => $savingsAmount,
+            'distributable_profit' => $distributableProfit,
             'share_total' => $shareTotal,
             'share_is_valid' => abs($shareTotal - 100) < 0.001,
             'members' => $rows,
-            'warnings' => $this->warnings($groupId, $periodStart, $periodEnd, $shareTotal),
+            'warnings' => $warnings,
         ];
     }
 

@@ -8,7 +8,7 @@ class AuthMiddleware
 {
     public function handle(string $uri): void
     {
-        $path = parse_url($uri, PHP_URL_PATH) ?: '/';
+        $path = request_path($uri);
         $publicPaths = ['/login'];
 
         if (in_array($path, $publicPaths, true)) {

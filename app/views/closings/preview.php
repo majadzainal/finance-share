@@ -37,7 +37,7 @@
                     <input type="date" class="form-control" id="period_end" name="period_end" value="<?= e($input['period_end']) ?>" required>
                 </div>
 
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-3">
                     <label for="transfer_method_id" class="form-label">Metode Transfer</label>
                     <select class="form-select" id="transfer_method_id" name="transfer_method_id" data-transfer-method>
                         <option value="0" data-fee="0">Tanpa metode transfer</option>
@@ -58,7 +58,13 @@
                     <input type="number" step="0.01" min="0" class="form-control" id="transfer_fee_amount" name="transfer_fee_amount" value="<?= e($input['transfer_fee_amount'] ?? 0) ?>" data-transfer-fee>
                 </div>
 
-                <div class="col-12 col-md-2 d-flex align-items-end">
+                <div class="col-12 col-md-4">
+                    <label for="savings_amount" class="form-label">Penyisihan Tabungan Toko (Rp)</label>
+                    <input type="number" step="0.01" min="0" class="form-control" id="savings_amount" name="savings_amount" value="<?= e($input['savings_amount'] ?? 0) ?>" placeholder="Disisihkan ke kas cadangan toko">
+                    <div class="form-text small">Nominal yang disisihkan sebelum dibagi ke member.</div>
+                </div>
+
+                <div class="col-12 col-md-2 d-flex align-items-center mt-md-4">
                     <button type="submit" class="btn btn-primary w-100">Preview</button>
                 </div>
             </form>
@@ -71,38 +77,54 @@
         <?php endforeach; ?>
 
         <div class="row g-3">
-            <div class="col-12 col-md-6 col-xl-3">
+            <div class="col-12 col-md-4 col-xl-2">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <div class="text-secondary small mb-1">Opening Balance</div>
-                        <div class="fs-5 fw-bold">Rp <?= e(number_format($preview['opening_balance'], 0, ',', '.')) ?></div>
+                        <div class="fs-6 fw-bold">Rp <?= e(number_format($preview['opening_balance'], 0, ',', '.')) ?></div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-6 col-xl-3">
+            <div class="col-12 col-md-4 col-xl-2">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <div class="text-secondary small mb-1">Total Income</div>
-                        <div class="fs-5 fw-bold text-success">Rp <?= e(number_format($preview['total_income'], 0, ',', '.')) ?></div>
+                        <div class="fs-6 fw-bold text-success">Rp <?= e(number_format($preview['total_income'], 0, ',', '.')) ?></div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-6 col-xl-3">
+            <div class="col-12 col-md-4 col-xl-2">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <div class="text-secondary small mb-1">Total Expense</div>
-                        <div class="fs-5 fw-bold text-danger">Rp <?= e(number_format($preview['total_expense'], 0, ',', '.')) ?></div>
+                        <div class="fs-6 fw-bold text-danger">Rp <?= e(number_format($preview['total_expense'], 0, ',', '.')) ?></div>
                         <?php if (($preview['transfer_fee_amount'] ?? 0) > 0): ?>
-                            <div class="small text-secondary">Termasuk biaya transfer Rp <?= e(number_format($preview['transfer_fee_amount'], 0, ',', '.')) ?></div>
+                            <div class="small text-secondary">Fee: Rp <?= e(number_format($preview['transfer_fee_amount'], 0, ',', '.')) ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-6 col-xl-3">
+            <div class="col-12 col-md-4 col-xl-2">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <div class="text-secondary small mb-1">Net Profit</div>
-                        <div class="fs-5 fw-bold">Rp <?= e(number_format($preview['net_profit'], 0, ',', '.')) ?></div>
+                        <div class="fs-6 fw-bold">Rp <?= e(number_format($preview['net_profit'], 0, ',', '.')) ?></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 col-xl-2">
+                <div class="card border-0 shadow-sm h-100 bg-light">
+                    <div class="card-body">
+                        <div class="text-secondary small mb-1">Tabungan Toko</div>
+                        <div class="fs-6 fw-bold text-info">Rp <?= e(number_format($preview['savings_amount'] ?? 0, 0, ',', '.')) ?></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 col-xl-2">
+                <div class="card border-0 shadow-sm h-100 border-primary">
+                    <div class="card-body">
+                        <div class="text-primary small mb-1 fw-semibold">Laba Dibagikan</div>
+                        <div class="fs-6 fw-bold text-primary">Rp <?= e(number_format($preview['distributable_profit'] ?? $preview['net_profit'], 0, ',', '.')) ?></div>
                     </div>
                 </div>
             </div>
@@ -112,7 +134,7 @@
             <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between gap-2">
                 <div>
                     <div class="fw-semibold"><?= e($preview['group']['name']) ?></div>
-                    <div class="small text-secondary"><?= e($preview['period_start']) ?> sampai <?= e($preview['period_end']) ?></div>
+                    <div class="small text-secondary"><?= e($preview['period_start']) ?> sampai <?= e($preview['period_end']) ?> (Dasar Pembagian: Rp <?= e(number_format($preview['distributable_profit'] ?? $preview['net_profit'], 0, ',', '.')) ?>)</div>
                 </div>
                 <div>
                     <?php if ($preview['share_is_valid']): ?>
@@ -166,6 +188,7 @@
                 <input type="hidden" name="period_end" value="<?= e($input['period_end']) ?>">
                 <input type="hidden" name="transfer_method_id" value="<?= e($input['transfer_method_id'] ?? 0) ?>">
                 <input type="hidden" name="transfer_fee_amount" value="<?= e($input['transfer_fee_amount'] ?? 0) ?>">
+                <input type="hidden" name="savings_amount" value="<?= e($input['savings_amount'] ?? 0) ?>">
                 <button type="submit" class="btn btn-danger">Finalize Closing</button>
             </form>
         <?php endif; ?>

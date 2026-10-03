@@ -47,6 +47,35 @@ if (! function_exists('e')) {
 if (! function_exists('url')) {
     function url(string $path = ''): string
     {
-        return rtrim((string) config('app.base_url'), '/') . '/' . ltrim($path, '/');
+        $baseUrl = rtrim((string) config('app.base_url', ''), '/');
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        $basePath = parse_url($baseUrl, PHP_URL_PATH);
+        if ($basePath && $basePath !== '/' && str_starts_with($path, $basePath)) {
+            $path = substr($path, strlen($basePath));
+        }
+
+        return $baseUrl . '/' . ltrim($path, '/');
+    }
+}
+
+if (! function_exists('request_path')) {
+    function request_path(?string $uri = null): string
+    {
+        $uri = $uri ?? $_SERVER['REQUEST_URI'] ?? '/';
+        $path = parse_url($uri, PHP_URL_PATH) ?: '/';
+
+        $baseUrl = (string) config('app.base_url', '');
+        $basePath = parse_url($baseUrl, PHP_URL_PATH);
+
+        if ($basePath && $basePath !== '/' && str_starts_with($path, $basePath)) {
+            $path = substr($path, strlen($basePath));
+        }
+
+        $path = '/' . ltrim($path, '/');
+        return $path === '' ? '/' : $path;
     }
 }

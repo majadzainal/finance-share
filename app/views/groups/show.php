@@ -19,6 +19,15 @@
                 <dt class="col-sm-3">Name</dt>
                 <dd class="col-sm-9"><?= e($group['name']) ?></dd>
 
+                <dt class="col-sm-3">Saldo Tabungan Toko</dt>
+                <dd class="col-sm-9">
+                    <span class="fs-5 fw-bold text-primary">Rp <?= e(number_format((float) ($savingsBalance ?? 0), 0, ',', '.')) ?></span>
+                    <div class="mt-1 d-flex gap-2">
+                        <a href="<?= e(url('/group-savings/' . $group['id'])) ?>" class="btn btn-sm btn-outline-primary">Lihat Mutasi Tabungan</a>
+                        <a href="<?= e(url('/group-savings/withdraw?group_id=' . $group['id'])) ?>" class="btn btn-sm btn-outline-danger">Tarik Tabungan</a>
+                    </div>
+                </dd>
+
                 <dt class="col-sm-3">Status</dt>
                 <dd class="col-sm-9">
                     <?php if ((int) $group['is_active'] === 1): ?>
