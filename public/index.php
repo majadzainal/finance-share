@@ -103,6 +103,8 @@ $router->get('/group-savings/{id}', [GroupSavingsController::class, 'show']);
 $router->get('/account-balances', [AccountBalanceController::class, 'index']);
 $router->post('/account-balances', [AccountBalanceController::class, 'update']);
 $router->get('/closing', [ClosingController::class, 'index']);
+$router->post('/closing', [ClosingController::class, 'preview']);
+$router->get('/closing/preview', [ClosingController::class, 'index']);
 $router->post('/closing/preview', [ClosingController::class, 'preview']);
 $router->post('/closing/finalize', [ClosingController::class, 'finalize']);
 $router->get('/profit-distribution', [ProfitDistributionController::class, 'index']);

@@ -30,8 +30,8 @@ class ClosingController extends Controller
             'period_start' => trim($_POST['period_start'] ?? ''),
             'period_end' => trim($_POST['period_end'] ?? ''),
             'transfer_method_id' => (int) ($_POST['transfer_method_id'] ?? 0),
-            'transfer_fee_amount' => (float) str_replace(',', '.', trim($_POST['transfer_fee_amount'] ?? '0')),
-            'savings_amount' => (float) str_replace(',', '.', trim($_POST['savings_amount'] ?? '0')),
+            'transfer_fee_amount' => parse_money($_POST['transfer_fee_amount'] ?? '0'),
+            'savings_amount' => parse_money($_POST['savings_amount'] ?? '0'),
         ];
         $preview = null;
         $error = null;
@@ -62,8 +62,8 @@ class ClosingController extends Controller
             'period_start' => trim($_POST['period_start'] ?? ''),
             'period_end' => trim($_POST['period_end'] ?? ''),
             'transfer_method_id' => (int) ($_POST['transfer_method_id'] ?? 0),
-            'transfer_fee_amount' => (float) str_replace(',', '.', trim($_POST['transfer_fee_amount'] ?? '0')),
-            'savings_amount' => (float) str_replace(',', '.', trim($_POST['savings_amount'] ?? '0')),
+            'transfer_fee_amount' => parse_money($_POST['transfer_fee_amount'] ?? '0'),
+            'savings_amount' => parse_money($_POST['savings_amount'] ?? '0'),
         ];
         $preview = null;
         $error = null;

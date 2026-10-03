@@ -55,12 +55,12 @@
 
                 <div class="col-12 col-md-3">
                     <label for="transfer_fee_amount" class="form-label">Biaya Transfer</label>
-                    <input type="number" step="0.01" min="0" class="form-control" id="transfer_fee_amount" name="transfer_fee_amount" value="<?= e($input['transfer_fee_amount'] ?? 0) ?>" data-transfer-fee>
+                    <input type="text" inputmode="numeric" class="form-control" id="transfer_fee_amount" name="transfer_fee_amount" value="<?= e($input['transfer_fee_amount'] ?? 0) ?>" data-transfer-fee placeholder="0">
                 </div>
 
                 <div class="col-12 col-md-4">
                     <label for="savings_amount" class="form-label">Penyisihan Tabungan Toko (Rp)</label>
-                    <input type="number" step="0.01" min="0" class="form-control" id="savings_amount" name="savings_amount" value="<?= e($input['savings_amount'] ?? 0) ?>" placeholder="Disisihkan ke kas cadangan toko">
+                    <input type="text" inputmode="numeric" class="form-control" id="savings_amount" name="savings_amount" value="<?= e($input['savings_amount'] ?? 0) ?>" placeholder="Contoh: 500000 atau 500.000">
                     <div class="form-text small">Nominal yang disisihkan sebelum dibagi ke member.</div>
                 </div>
 
