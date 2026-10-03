@@ -1,0 +1,14 @@
+# Environment and local configs
+/app/config/app.php
+
+# Storage logs and uploads
+/storage/logs/*.log
+/storage/uploads/income_imports/*
+!/storage/uploads/income_imports/.gitkeep
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
