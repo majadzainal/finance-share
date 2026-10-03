@@ -1,8 +1,8 @@
 -- Migration for Group Savings (Tabungan Toko) and Closing updates
 
 ALTER TABLE trx_closings 
-ADD COLUMN IF NOT EXISTS savings_amount DECIMAL(18,2) NOT NULL DEFAULT 0.00 AFTER net_profit,
-ADD COLUMN IF NOT EXISTS distributable_profit DECIMAL(18,2) NOT NULL DEFAULT 0.00 AFTER savings_amount;
+ADD COLUMN savings_amount DECIMAL(18,2) NOT NULL DEFAULT 0.00 AFTER net_profit,
+ADD COLUMN distributable_profit DECIMAL(18,2) NOT NULL DEFAULT 0.00 AFTER savings_amount;
 
 CREATE TABLE IF NOT EXISTS trx_group_savings (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
