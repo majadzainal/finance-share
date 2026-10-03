@@ -25,14 +25,6 @@ class ClosingController extends Controller
 
     public function preview(): string
     {
-        echo '<pre style="background:#111;color:#0f0;padding:20px;font-size:16px;">';
-        echo "=== DEBUG POST DATA ===\n";
-        var_dump($_POST);
-        echo "\n=== PARSED SAVINGS AMOUNT ===\n";
-        var_dump(parse_money($_POST['savings_amount'] ?? '0'));
-        echo '</pre>';
-        exit;
-
         $input = [
             'group_id' => (int) ($_POST['group_id'] ?? 0),
             'period_start' => trim($_POST['period_start'] ?? ''),

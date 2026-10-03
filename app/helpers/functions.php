@@ -51,13 +51,19 @@ if (! function_exists('url')) {
             return $path;
         }
 
-        // Auto-detect base URL dynamically if HTTP_HOST is present, or fallback to config
-        $baseUrl = rtrim((string) config('app.base_url', ''), '/');
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (!empty($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443)
+            || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower((string) $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+            || (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower((string) $_SERVER['HTTP_X_FORWARDED_SSL']) === 'on');
+
+        $configuredBaseUrl = rtrim((string) config('app.base_url', ''), '/');
+        $scheme = $isHttps || str_starts_with($configuredBaseUrl, 'https://') ? 'https' : 'http';
+
+        $baseUrl = $configuredBaseUrl;
         if (isset($_SERVER['HTTP_HOST'])) {
-            $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
             $host = $_SERVER['HTTP_HOST'];
 
-            $configPath = parse_url($baseUrl, PHP_URL_PATH) ?: '';
+            $configPath = parse_url($configuredBaseUrl, PHP_URL_PATH) ?: '';
             $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
 
             $subPath = '';
